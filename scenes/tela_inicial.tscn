@@ -4,6 +4,19 @@
 [ext_resource type="Texture2D" uid="uid://cgl32p2i5u7ob" path="res://sprites/menu/start_button.png" id="2_hvj2l"]
 [ext_resource type="Texture2D" uid="uid://dkyqxqbloo5mt" path="res://sprites/menu/logo.png" id="3_mxryr"]
 
+[sub_resource type="GDScript" id="GDScript_2o6u0"]
+resource_name = "start_menu"
+script/source = "extends MenuButton
+
+var select_screen = preload(\"res://scenes/seleção.tscn\").instantiate()
+
+func _ready():
+	self.pressed.connect(_button_pressed)
+func _button_pressed():
+	get_tree().root.add_child(select_screen)
+	queue_free()
+"
+
 [node name="Control" type="Control" unique_id=1914449291]
 layout_mode = 3
 anchors_preset = 15
@@ -19,8 +32,8 @@ texture = ExtResource("1_2o6u0")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=796318975]
 layout_mode = 0
-offset_right = 1155.0
-offset_bottom = 656.0
+offset_right = 1158.0
+offset_bottom = 650.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer" unique_id=1756441299]
 layout_mode = 2
@@ -35,9 +48,13 @@ position = Vector2(808, 246.00003)
 scale = Vector2(2.046417, 2.0551949)
 texture = ExtResource("3_mxryr")
 
-[node name="MenuButton" type="MenuButton" parent="HBoxContainer" unique_id=1736448171]
-custom_minimum_size = Vector2(200, 50)
-layout_mode = 2
+[node name="MenuButton" type="MenuButton" parent="." unique_id=1736448171]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 389.0
+offset_right = 524.0
+offset_bottom = 650.0
 mouse_default_cursor_shape = 2
 icon = ExtResource("2_hvj2l")
 vertical_icon_alignment = 2
+script = SubResource("GDScript_2o6u0")
