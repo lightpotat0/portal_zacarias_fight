@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://dnxnb7pbbfkht"]
+
+[ext_resource type="Texture2D" uid="uid://tuc5bk7ye1ur" path="res://sprites/menu/selection_bg.jpg" id="1_78vtr"]
+[ext_resource type="Texture2D" uid="uid://14muqy4xns7k" path="res://sprites/menu/fight.png" id="2_wrq0u"]
+
+[node name="seleção de personagem" type="Control" unique_id=1195761187]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SelectionBg" type="Sprite2D" parent="." unique_id=1073859496]
+position = Vector2(584.75, 330.5)
+scale = Vector2(1.3710802, 1.6955446)
+texture = ExtResource("1_78vtr")
+
+[node name="HFlowContainer" type="HFlowContainer" parent="." unique_id=146709078]
+layout_mode = 0
+offset_right = 1151.0
+offset_bottom = 658.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HFlowContainer" unique_id=74652906]
+layout_mode = 2
+
+[node name="MenuButton" type="MenuButton" parent="HFlowContainer" unique_id=1493769301]
+layout_mode = 2
+
+[node name="Fight" type="Sprite2D" parent="HFlowContainer" unique_id=1631511774]
+position = Vector2(599, 561)
+texture = ExtResource("2_wrq0u")
