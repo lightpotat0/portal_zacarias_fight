@@ -17,7 +17,7 @@ func _button_pressed():
 	queue_free()
 "
 
-[node name="Control" type="Control" unique_id=1914449291]
+[node name="initial_screen" type="Control" unique_id=1914449291]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -30,12 +30,12 @@ position = Vector2(592.5, 397.74997)
 scale = Vector2(0.92578125, 0.93376315)
 texture = ExtResource("1_2o6u0")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=796318975]
+[node name="ContainTitle" type="HBoxContainer" parent="." unique_id=796318975]
 layout_mode = 0
 offset_right = 1158.0
 offset_bottom = 650.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer" unique_id=1756441299]
+[node name="PortalZacarias" type="VBoxContainer" parent="ContainTitle" unique_id=1756441299]
 layout_mode = 2
 mouse_filter = 0
 mouse_behavior_recursive = 2
@@ -43,12 +43,12 @@ mouse_force_pass_scroll_events = false
 mouse_default_cursor_shape = 2
 alignment = 1
 
-[node name="Logo" type="Sprite2D" parent="HBoxContainer/VBoxContainer" unique_id=754476391]
+[node name="Logo" type="Sprite2D" parent="ContainTitle/PortalZacarias" unique_id=754476391]
 position = Vector2(808, 246.00003)
 scale = Vector2(2.046417, 2.0551949)
 texture = ExtResource("3_mxryr")
 
-[node name="MenuButton" type="MenuButton" parent="." unique_id=1736448171]
+[node name="Start" type="MenuButton" parent="." unique_id=1736448171]
 layout_mode = 0
 offset_left = 4.0
 offset_top = 389.0
