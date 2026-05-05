@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://ce1k8wfpqbfxv" path="res://sprites/menu/stoped-removebg-previ.png" id="4_ew3kx"]
 [ext_resource type="Texture2D" uid="uid://by1puljuh3u3q" path="res://sprites/menu/pose2-removebg-preview.png" id="5_ew3kx"]
 [ext_resource type="Script" uid="uid://byb1rdx4t457m" path="res://scenes/orange.gd" id="5_naccg"]
+[ext_resource type="Texture2D" uid="uid://bdar1kcnj3k6f" path="res://sprites/menu/WhatsApp_Image_2026-05-04_at_17.24.04-removebg-preview.png" id="9_ew3kx"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_naccg"]
 animations = [{
@@ -34,6 +35,20 @@ func _button_pressed():
 	get_tree().root.add_child(select_screen)
 	queue_free()
 "
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gfhmg"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_ew3kx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_ew3kx")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [node name="seleção de personagem" type="Control" unique_id=1195761187]
 layout_mode = 3
@@ -91,4 +106,9 @@ offset_bottom = 195.0
 icon = ExtResource("2_wrq0u")
 script = SubResource("GDScript_wrq0u")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1898368917]
+[node name="Orange1" type="AnimatedSprite2D" parent="." unique_id=1898368917]
+position = Vector2(535, 626)
+scale = Vector2(1.4717894, 1.5240495)
+sprite_frames = SubResource("SpriteFrames_gfhmg")
+frame = 1
+frame_progress = 0.5901359

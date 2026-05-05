@@ -1,11 +1,30 @@
 extends MenuButton
 
+var clicado = false
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	connect("mouse_entered", mouse_entrou)
+	connect("mouse_exited", mouse_saiu)
+	$"../Orange1".visible = false
+	
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("click"):
+		var sprite = $"../Orange1"
+		botao_clicado()
+		
+func mouse_entrou():
+	if clicado: return
+	$"../Orange1".visible = true
+	
+func mouse_saiu():
+	if clicado:
+		$"../Orange1".visible = true
+	else: 
+		$"../Orange1".visible = false
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+func botao_clicado():
+	clicado = true
+	var sprite = $"../Orange1"
+	sprite.stop()
+	sprite.frame = 1
+	sprite.visible = true
