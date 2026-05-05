@@ -19,7 +19,7 @@ animations = [{
 "texture": ExtResource("5_ew3kx")
 }],
 "loop": true,
-"name": &"default",
+"name": &"frame",
 "speed": 5.0
 }]
 
@@ -79,6 +79,7 @@ icon = ExtResource("4_ew3kx")
 position = Vector2(895, 410)
 scale = Vector2(1.1005001, 1.068)
 sprite_frames = SubResource("SpriteFrames_naccg")
+animation = &"frame"
 
 [node name="Fight" type="MenuButton" parent="." unique_id=1493769301]
 layout_mode = 0
