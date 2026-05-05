@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://bgei1mkagt11y" path="res://sprites/menu/pose1-removebg-preview.png" id="4_cd557"]
 [ext_resource type="Texture2D" uid="uid://ce1k8wfpqbfxv" path="res://sprites/menu/stoped-removebg-previ.png" id="4_ew3kx"]
 [ext_resource type="Texture2D" uid="uid://by1puljuh3u3q" path="res://sprites/menu/pose2-removebg-preview.png" id="5_ew3kx"]
-[ext_resource type="Texture2D" uid="uid://dkbaimtmm7y78" path="res://sprites/menu/stoped-removebg-preview.png" id="8_naccg"]
+[ext_resource type="Script" uid="uid://byb1rdx4t457m" path="res://scenes/orange.gd" id="5_naccg"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_naccg"]
 animations = [{
@@ -74,6 +74,7 @@ offset_top = 361.0
 offset_right = 267.0
 offset_bottom = 533.0
 icon = ExtResource("4_ew3kx")
+script = ExtResource("5_naccg")
 
 [node name="Black1" type="AnimatedSprite2D" parent="." unique_id=847812926]
 position = Vector2(895, 410)
@@ -90,7 +91,4 @@ offset_bottom = 195.0
 icon = ExtResource("2_wrq0u")
 script = SubResource("GDScript_wrq0u")
 
-[node name="StopedRemovebgPreview" type="Sprite2D" parent="." unique_id=780894683]
-position = Vector2(473.5, 669.25)
-scale = Vector2(1.8779999, 1.6409999)
-texture = ExtResource("8_naccg")
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1898368917]
