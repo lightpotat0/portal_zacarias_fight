@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://nwkqdd3qfwu8"]
+
+[node name="GUI" type="Control" unique_id=236178913]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1091973859]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Bars" type="VBoxContainer" parent="HBoxContainer" unique_id=737570407]
+layout_mode = 2
+
+[node name="background" type="NinePatchRect" parent="HBoxContainer/Bars" unique_id=243579128]
+layout_mode = 2
+
+[node name="titile" type="TextureRect" parent="HBoxContainer/Bars" unique_id=1914702958]
+layout_mode = 2
+
+[node name="number" type="Label" parent="HBoxContainer/Bars" unique_id=394564725]
+layout_mode = 2
+
+[node name="Counters" type="HBoxContainer" parent="HBoxContainer" unique_id=864559486]
+layout_mode = 2
