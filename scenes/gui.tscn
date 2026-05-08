@@ -1,35 +1,46 @@
 [gd_scene format=3 uid="uid://nwkqdd3qfwu8"]
 
+[ext_resource type="Texture2D" uid="uid://cr21ne5p0xuty" path="res://sprites/ui_gui_design/label_HP.png" id="1_efmwq"]
+[ext_resource type="Texture2D" uid="uid://v7frvvop1rqk" path="res://sprites/ui_gui_design/label_HP_bg.png" id="1_mfius"]
+
 [node name="GUI" type="Control" unique_id=236178913]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = 4.0
+offset_bottom = -563.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1091973859]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 70.0
+offset_bottom = 42.0
 
 [node name="Bars" type="VBoxContainer" parent="HBoxContainer" unique_id=737570407]
 layout_mode = 2
 
-[node name="background" type="NinePatchRect" parent="HBoxContainer/Bars" unique_id=243579128]
+[node name="Bar" type="HBoxContainer" parent="HBoxContainer/Bars" unique_id=974327323]
 layout_mode = 2
 
-[node name="titile" type="TextureRect" parent="HBoxContainer/Bars/background" unique_id=1914702958]
-layout_mode = 0
-offset_top = 4.0
-offset_right = 1.0
-offset_bottom = 4.0
+[node name="Cont" type="MarginContainer" parent="HBoxContainer/Bars/Bar" unique_id=270255279]
+layout_mode = 2
 
-[node name="number" type="Label" parent="HBoxContainer/Bars/background" unique_id=394564725]
-layout_mode = 0
-offset_top = 4.0
-offset_right = 1.0
-offset_bottom = 27.0
+[node name="background" type="NinePatchRect" parent="HBoxContainer/Bars/Bar/Cont" unique_id=243579128]
+layout_mode = 2
+texture = ExtResource("1_mfius")
+
+[node name="titile" type="TextureRect" parent="HBoxContainer/Bars/Bar/Cont" unique_id=1914702958]
+layout_mode = 2
+texture = ExtResource("1_efmwq")
+
+[node name="number" type="Label" parent="HBoxContainer/Bars/Bar/Cont" unique_id=394564725]
+layout_mode = 2
+text = "10"
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="HBoxContainer/Bars" unique_id=1428301097]
+layout_mode = 2
 
 [node name="Counters" type="HBoxContainer" parent="HBoxContainer" unique_id=864559486]
 layout_mode = 2
