@@ -19,11 +19,17 @@ layout_mode = 2
 [node name="background" type="NinePatchRect" parent="HBoxContainer/Bars" unique_id=243579128]
 layout_mode = 2
 
-[node name="titile" type="TextureRect" parent="HBoxContainer/Bars" unique_id=1914702958]
-layout_mode = 2
+[node name="titile" type="TextureRect" parent="HBoxContainer/Bars/background" unique_id=1914702958]
+layout_mode = 0
+offset_top = 4.0
+offset_right = 1.0
+offset_bottom = 4.0
 
-[node name="number" type="Label" parent="HBoxContainer/Bars" unique_id=394564725]
-layout_mode = 2
+[node name="number" type="Label" parent="HBoxContainer/Bars/background" unique_id=394564725]
+layout_mode = 0
+offset_top = 4.0
+offset_right = 1.0
+offset_bottom = 27.0
 
 [node name="Counters" type="HBoxContainer" parent="HBoxContainer" unique_id=864559486]
 layout_mode = 2
