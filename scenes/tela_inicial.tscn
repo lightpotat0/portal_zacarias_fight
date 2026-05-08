@@ -1,0 +1,60 @@
+[gd_scene format=3 uid="uid://dx3uolvbqwodv"]
+
+[ext_resource type="Texture2D" uid="uid://bwpibe26tae4i" path="res://sprites/menu/menu_bg.jpg" id="1_2o6u0"]
+[ext_resource type="Texture2D" uid="uid://cgl32p2i5u7ob" path="res://sprites/menu/start_button.png" id="2_hvj2l"]
+[ext_resource type="Texture2D" uid="uid://dkyqxqbloo5mt" path="res://sprites/menu/logo.png" id="3_mxryr"]
+
+[sub_resource type="GDScript" id="GDScript_2o6u0"]
+resource_name = "start_menu"
+script/source = "extends MenuButton
+
+var select_screen = preload(\"res://scenes/seleção.tscn\").instantiate()
+
+func _ready():
+	self.pressed.connect(_button_pressed)
+func _button_pressed():
+	get_tree().root.add_child(select_screen)
+	queue_free()
+"
+
+[node name="initial_screen" type="Control" unique_id=1914449291]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MenuBg" type="Sprite2D" parent="." unique_id=9369549]
+position = Vector2(592.5, 397.74997)
+scale = Vector2(0.92578125, 0.93376315)
+texture = ExtResource("1_2o6u0")
+
+[node name="ContainTitle" type="HBoxContainer" parent="." unique_id=796318975]
+layout_mode = 0
+offset_right = 1158.0
+offset_bottom = 650.0
+
+[node name="PortalZacarias" type="VBoxContainer" parent="ContainTitle" unique_id=1756441299]
+layout_mode = 2
+mouse_filter = 0
+mouse_behavior_recursive = 2
+mouse_force_pass_scroll_events = false
+mouse_default_cursor_shape = 2
+alignment = 1
+
+[node name="Logo" type="Sprite2D" parent="ContainTitle/PortalZacarias" unique_id=754476391]
+position = Vector2(808, 246.00003)
+scale = Vector2(2.046417, 2.0551949)
+texture = ExtResource("3_mxryr")
+
+[node name="Start" type="MenuButton" parent="." unique_id=1736448171]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 389.0
+offset_right = 524.0
+offset_bottom = 650.0
+mouse_default_cursor_shape = 2
+icon = ExtResource("2_hvj2l")
+vertical_icon_alignment = 2
+script = SubResource("GDScript_2o6u0")

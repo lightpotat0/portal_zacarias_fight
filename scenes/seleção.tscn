@@ -1,0 +1,84 @@
+[gd_scene format=3 uid="uid://dnxnb7pbbfkht"]
+
+[ext_resource type="Texture2D" uid="uid://tuc5bk7ye1ur" path="res://sprites/menu/selection_bg.jpg" id="1_78vtr"]
+[ext_resource type="Texture2D" uid="uid://bnur2bnglu7d4" path="res://sprites/menu/stop-removebg-preview.png" id="2_8kbco"]
+[ext_resource type="Texture2D" uid="uid://14muqy4xns7k" path="res://sprites/menu/fight.png" id="2_wrq0u"]
+[ext_resource type="Script" uid="uid://o54rekhfjvif" path="res://scripts/black.gd" id="3_t6ucj"]
+[ext_resource type="Texture2D" uid="uid://bgei1mkagt11y" path="res://sprites/menu/pose1-removebg-preview.png" id="4_cd557"]
+[ext_resource type="Texture2D" uid="uid://by1puljuh3u3q" path="res://sprites/menu/pose2-removebg-preview.png" id="5_ew3kx"]
+[ext_resource type="Script" uid="uid://byb1rdx4t457m" path="res://scripts/orange.gd" id="5_naccg"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_naccg"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_cd557")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_ew3kx")
+}],
+"loop": true,
+"name": &"frame",
+"speed": 5.0
+}]
+
+[sub_resource type="GDScript" id="GDScript_wrq0u"]
+resource_name = "fight_button"
+script/source = "extends MenuButton
+"
+
+[node name="seleção de personagem" type="Control" unique_id=1195761187]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SelectionBg" type="Sprite2D" parent="." unique_id=1073859496]
+position = Vector2(584.75, 330.5)
+scale = Vector2(1.3710802, 1.6955446)
+texture = ExtResource("1_78vtr")
+
+[node name="ContainerSelect" type="HFlowContainer" parent="." unique_id=146709078]
+layout_mode = 0
+offset_right = 1151.0
+offset_bottom = 658.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ContainerSelect" unique_id=74652906]
+layout_mode = 2
+
+[node name="Black" type="MenuButton" parent="." unique_id=1170374835]
+texture_filter = 3
+layout_mode = 0
+offset_left = 60.0
+offset_top = 54.0
+offset_right = 266.0
+offset_bottom = 226.0
+mouse_default_cursor_shape = 2
+icon = ExtResource("2_8kbco")
+script = ExtResource("3_t6ucj")
+
+[node name="Orange" type="MenuButton" parent="." unique_id=1522641023]
+layout_mode = 0
+offset_left = 61.0
+offset_top = 361.0
+offset_right = 267.0
+offset_bottom = 533.0
+icon = ExtResource("2_8kbco")
+script = ExtResource("5_naccg")
+
+[node name="Black1" type="AnimatedSprite2D" parent="." unique_id=847812926]
+position = Vector2(895, 410)
+scale = Vector2(1.1005001, 1.068)
+sprite_frames = SubResource("SpriteFrames_naccg")
+animation = &"frame"
+
+[node name="Fight" type="MenuButton" parent="." unique_id=1493769301]
+layout_mode = 0
+offset_left = 602.0
+offset_top = -3.0
+offset_right = 1144.0
+offset_bottom = 195.0
+icon = ExtResource("2_wrq0u")
+script = SubResource("GDScript_wrq0u")
