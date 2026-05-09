@@ -25,6 +25,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="background" type="CanvasLayer" parent="." unique_id=782235260]
+
 [node name="MenuBg" type="Sprite2D" parent="." unique_id=9369549]
 position = Vector2(592.5, 397.74997)
 scale = Vector2(0.92578125, 0.93376315)
