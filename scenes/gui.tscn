@@ -1,29 +1,112 @@
 [gd_scene format=3 uid="uid://nwkqdd3qfwu8"]
 
+[ext_resource type="Texture2D" uid="uid://cr21ne5p0xuty" path="res://sprites/ui_gui_design/label_HP.png" id="1_efmwq"]
+[ext_resource type="Texture2D" uid="uid://v7frvvop1rqk" path="res://sprites/ui_gui_design/label_HP_bg.png" id="1_mfius"]
+[ext_resource type="Texture2D" uid="uid://bmjgoy184qdwr" path="res://sprites/ui_gui_design/lifebar_bg.png" id="3_b8iy7"]
+[ext_resource type="Texture2D" uid="uid://crkcu5d4g8akp" path="res://sprites/ui_gui_design/lifebar_fill.png" id="4_jqlde"]
+[ext_resource type="Texture2D" uid="uid://bjimh2et0ygc7" path="res://sprites/ui_gui_design/label_EP.png" id="5_7yii4"]
+
 [node name="GUI" type="Control" unique_id=236178913]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -4.0
+offset_right = 4.0
+offset_bottom = -567.0
 grow_horizontal = 2
 grow_vertical = 2
+rotation = -6.2831855
 
-[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1091973859]
+[node name="Player1" type="HBoxContainer" parent="." unique_id=1091973859]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 274.0
+offset_bottom = 68.0
 
-[node name="Bars" type="VBoxContainer" parent="HBoxContainer" unique_id=737570407]
+[node name="Bars" type="VBoxContainer" parent="Player1" unique_id=737570407]
 layout_mode = 2
 
-[node name="background" type="NinePatchRect" parent="HBoxContainer/Bars" unique_id=243579128]
+[node name="Bar" type="HBoxContainer" parent="Player1/Bars" unique_id=974327323]
 layout_mode = 2
 
-[node name="titile" type="TextureRect" parent="HBoxContainer/Bars" unique_id=1914702958]
+[node name="Cont" type="MarginContainer" parent="Player1/Bars/Bar" unique_id=270255279]
 layout_mode = 2
 
-[node name="number" type="Label" parent="HBoxContainer/Bars" unique_id=394564725]
+[node name="background" type="NinePatchRect" parent="Player1/Bars/Bar/Cont" unique_id=243579128]
+custom_minimum_size = Vector2(100, 40)
+layout_mode = 2
+texture = ExtResource("1_mfius")
+
+[node name="titile" type="TextureRect" parent="Player1/Bars/Bar/Cont/background" unique_id=1914702958]
+custom_minimum_size = Vector2(50, 40)
+layout_mode = 0
+offset_left = 9.0
+offset_top = 6.0
+offset_right = 59.0
+offset_bottom = 46.0
+texture = ExtResource("1_efmwq")
+stretch_mode = 3
+
+[node name="number" type="Label" parent="Player1/Bars/Bar/Cont/background" unique_id=394564725]
+layout_mode = 0
+offset_left = 65.0
+offset_top = 13.0
+offset_right = 84.0
+offset_bottom = 36.0
+text = "10"
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="Player1/Bars/Bar" unique_id=1428301097]
+layout_mode = 2
+value = 100.0
+texture_under = ExtResource("3_b8iy7")
+texture_progress = ExtResource("4_jqlde")
+
+[node name="Counters" type="HBoxContainer" parent="Player1" unique_id=864559486]
 layout_mode = 2
 
-[node name="Counters" type="HBoxContainer" parent="HBoxContainer" unique_id=864559486]
+[node name="Player2" type="HBoxContainer" parent="." unique_id=988709678]
+layout_direction = 3
+layout_mode = 0
+offset_right = 274.0
+offset_bottom = 68.0
+
+[node name="Bars" type="VBoxContainer" parent="Player2" unique_id=1540354911]
+layout_mode = 2
+
+[node name="Bar" type="HBoxContainer" parent="Player2/Bars" unique_id=1225159294]
+layout_mode = 2
+
+[node name="Cont" type="MarginContainer" parent="Player2/Bars/Bar" unique_id=1815094762]
+layout_mode = 2
+
+[node name="background" type="NinePatchRect" parent="Player2/Bars/Bar/Cont" unique_id=1863327545]
+custom_minimum_size = Vector2(100, 40)
+layout_mode = 2
+texture = ExtResource("1_mfius")
+
+[node name="titile" type="TextureRect" parent="Player2/Bars/Bar/Cont/background" unique_id=1809883470]
+custom_minimum_size = Vector2(50, 40)
+layout_mode = 0
+offset_left = 9.0
+offset_top = 6.0
+offset_right = 59.0
+offset_bottom = 46.0
+texture = ExtResource("5_7yii4")
+stretch_mode = 3
+
+[node name="number" type="Label" parent="Player2/Bars/Bar/Cont/background" unique_id=1170368491]
+layout_mode = 0
+offset_left = 65.0
+offset_top = 13.0
+offset_right = 84.0
+offset_bottom = 36.0
+text = "10"
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="Player2/Bars/Bar" unique_id=1718936748]
+layout_mode = 2
+value = 100.0
+texture_under = ExtResource("3_b8iy7")
+texture_progress = ExtResource("4_jqlde")
+
+[node name="Counters" type="HBoxContainer" parent="Player2" unique_id=1642450902]
 layout_mode = 2
