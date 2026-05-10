@@ -3,19 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://bwpibe26tae4i" path="res://sprites/menu/menu_bg.jpg" id="1_2o6u0"]
 [ext_resource type="Texture2D" uid="uid://cgl32p2i5u7ob" path="res://sprites/menu/start_button.png" id="2_hvj2l"]
 [ext_resource type="Texture2D" uid="uid://dkyqxqbloo5mt" path="res://sprites/menu/logo.png" id="3_mxryr"]
-
-[sub_resource type="GDScript" id="GDScript_2o6u0"]
-resource_name = "start_menu"
-script/source = "extends MenuButton
-
-var select_screen = preload(\"res://scenes/seleção.tscn\").instantiate()
-
-func _ready():
-	self.pressed.connect(_button_pressed)
-func _button_pressed():
-	get_tree().root.add_child(select_screen)
-	queue_free()
-"
+[ext_resource type="Script" uid="uid://dru334cvy07c" path="res://scripts/start_button.gd" id="4_hvj2l"]
 
 [node name="initial_screen" type="Control" unique_id=1914449291]
 layout_mode = 3
@@ -57,4 +45,4 @@ offset_bottom = 650.0
 mouse_default_cursor_shape = 2
 icon = ExtResource("2_hvj2l")
 vertical_icon_alignment = 2
-script = SubResource("GDScript_2o6u0")
+script = ExtResource("4_hvj2l")

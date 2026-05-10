@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://b6gn1g44nyc8c"]
+
+[ext_resource type="PackedScene" uid="uid://nwkqdd3qfwu8" path="res://scenes/gui.tscn" id="1_6m4by"]
+[ext_resource type="Texture2D" uid="uid://de3ot251cdkhu" path="res://sprites/ui_gui_design/cenario.png" id="1_64dba"]
+
+[node name="Luta" type="Node2D" unique_id=1745101218]
+
+[node name="GUI2" type="CanvasLayer" parent="." unique_id=1297456438]
+
+[node name="Cenario" type="Sprite2D" parent="GUI2" unique_id=1202992035]
+position = Vector2(575.5, 365.5)
+scale = Vector2(0.9121835, 0.86817104)
+texture = ExtResource("1_64dba")
+
+[node name="GUI" parent="GUI2" unique_id=236178913 instance=ExtResource("1_6m4by")]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 17.0
+offset_top = 11.0
+offset_right = 1132.3096
+offset_bottom = 11.0
+grow_horizontal = 1
+grow_vertical = 1
