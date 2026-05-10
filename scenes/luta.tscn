@@ -8,8 +8,8 @@
 [node name="GUI2" type="CanvasLayer" parent="." unique_id=1297456438]
 
 [node name="Cenario" type="Sprite2D" parent="GUI2" unique_id=1202992035]
-position = Vector2(575.5, 365.5)
-scale = Vector2(0.9121835, 0.86817104)
+position = Vector2(598, -7.9999924)
+scale = Vector2(1.789557, 1.5486935)
 texture = ExtResource("1_64dba")
 
 [node name="GUI" parent="GUI2" unique_id=236178913 instance=ExtResource("1_6m4by")]
