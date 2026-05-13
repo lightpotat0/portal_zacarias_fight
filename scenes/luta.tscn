@@ -2,17 +2,20 @@
 
 [ext_resource type="PackedScene" uid="uid://nwkqdd3qfwu8" path="res://scenes/gui.tscn" id="1_6m4by"]
 [ext_resource type="Texture2D" uid="uid://de3ot251cdkhu" path="res://sprites/ui_gui_design/cenario.png" id="1_64dba"]
+[ext_resource type="PackedScene" uid="uid://dsclvyuci1etl" path="res://scenes/player_2.tscn" id="3_ipou6"]
+[ext_resource type="Texture2D" uid="uid://tuc5bk7ye1ur" path="res://sprites/menu/selection_bg.jpg" id="4_70woq"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ocv87"]
+size = Vector2(681, 210.5)
 
 [node name="Luta" type="Node2D" unique_id=1745101218]
 
-[node name="GUI2" type="CanvasLayer" parent="." unique_id=1297456438]
-
-[node name="Cenario" type="Sprite2D" parent="GUI2" unique_id=1202992035]
+[node name="Cenario" type="Sprite2D" parent="." unique_id=1202992035]
 position = Vector2(598, -7.9999924)
 scale = Vector2(1.789557, 1.5486935)
 texture = ExtResource("1_64dba")
 
-[node name="GUI" parent="GUI2" unique_id=236178913 instance=ExtResource("1_6m4by")]
+[node name="GUI" parent="." unique_id=236178913 instance=ExtResource("1_6m4by")]
 anchors_preset = 0
 anchor_right = 0.0
 anchor_bottom = 0.0
@@ -22,3 +25,18 @@ offset_right = 1132.3096
 offset_bottom = 11.0
 grow_horizontal = 1
 grow_vertical = 1
+
+[node name="Player2" parent="." unique_id=454800802 instance=ExtResource("3_ipou6")]
+position = Vector2(1000, 452)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=815171004]
+
+[node name="SelectionBg" type="Sprite2D" parent="StaticBody2D" unique_id=765873196]
+position = Vector2(630, 1006)
+scale = Vector2(2, 2)
+texture = ExtResource("4_70woq")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1742733883]
+position = Vector2(565, 815.5)
+scale = Vector2(2, 2)
+shape = SubResource("RectangleShape2D_ocv87")

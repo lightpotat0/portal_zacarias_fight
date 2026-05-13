@@ -3,22 +3,6 @@
 [ext_resource type="Texture2D" uid="uid://tuc5bk7ye1ur" path="res://sprites/menu/selection_bg.jpg" id="1_78vtr"]
 [ext_resource type="Texture2D" uid="uid://bnur2bnglu7d4" path="res://sprites/menu/stop-removebg-preview.png" id="2_8kbco"]
 [ext_resource type="Texture2D" uid="uid://14muqy4xns7k" path="res://sprites/menu/fight.png" id="2_wrq0u"]
-[ext_resource type="Texture2D" uid="uid://bgei1mkagt11y" path="res://sprites/menu/pose1-removebg-preview.png" id="4_cd557"]
-[ext_resource type="Texture2D" uid="uid://by1puljuh3u3q" path="res://sprites/menu/pose2-removebg-preview.png" id="5_ew3kx"]
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_naccg"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": ExtResource("4_cd557")
-}, {
-"duration": 1.0,
-"texture": ExtResource("5_ew3kx")
-}],
-"loop": true,
-"name": &"frame",
-"speed": 5.0
-}]
 
 [sub_resource type="GDScript" id="GDScript_wrq0u"]
 resource_name = "fight_button"
@@ -71,12 +55,6 @@ offset_top = 361.0
 offset_right = 267.0
 offset_bottom = 533.0
 icon = ExtResource("2_8kbco")
-
-[node name="Black1" type="AnimatedSprite2D" parent="." unique_id=847812926]
-position = Vector2(895, 410)
-scale = Vector2(1.1005001, 1.068)
-sprite_frames = SubResource("SpriteFrames_naccg")
-animation = &"frame"
 
 [node name="Fight" type="MenuButton" parent="." unique_id=1493769301]
 layout_mode = 0

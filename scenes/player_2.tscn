@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://dsclvyuci1etl"]
+
+[ext_resource type="Script" uid="uid://bpveao4vppjbf" path="res://scripts/player_2.gd" id="1_oc1kf"]
+[ext_resource type="Texture2D" uid="uid://dlhb42win6lfq" path="res://sprites/character/second player/fight_pose2.png" id="1_yjax8"]
+[ext_resource type="Texture2D" uid="uid://ltpc5yabxkfw" path="res://sprites/character/second player/fight_pose.png" id="2_oc1kf"]
+[ext_resource type="Texture2D" uid="uid://cy5ocvoipmq4f" path="res://sprites/character/second player/fight_pose3.png" id="3_0mr0g"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_v7tvf"]
+resource_name = "walk"
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_yjax8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_oc1kf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_0mr0g")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_oc1kf"]
+radius = 77.0
+height = 302.0
+
+[node name="Player2" type="CharacterBody2D" unique_id=454800802]
+script = ExtResource("1_oc1kf")
+
+[node name="Moves" type="AnimatedSprite2D" parent="." unique_id=570971162]
+scale = Vector2(0.5, 0.5)
+sprite_frames = SubResource("SpriteFrames_v7tvf")
+animation = &"walk"
+frame_progress = 0.13952115
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2134461329]
+shape = SubResource("CapsuleShape2D_oc1kf")
