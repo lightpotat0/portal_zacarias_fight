@@ -2,14 +2,14 @@ extends CharacterBody2D
 
 @onready var _animated_sprite = $Moves
 
-const SPEED = 300.0
-const JUMP_VELOCITY = -400.0
+const SPEED = 500.0
+const JUMP_VELOCITY = -800.0
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
 func _physics_process(delta):
-	_animated_sprite.play("stop")
 	if not is_on_floor():
 		velocity.y += gravity * delta
+		_animated_sprite.offset = Vector2(0, -10)
 
 	if Input.is_action_just_pressed("ui_up") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
@@ -26,18 +26,14 @@ func _physics_process(delta):
 	move_and_slide()
 	
 	if not is_on_floor():
-		_animated_sprite.play("jump") 
+		_animated_sprite.play("jump")
+		_animated_sprite.scale = Vector2(1.3, 1.3)
+		_animated_sprite.offset = Vector2(0, -10)
 	elif direction != 0:
-		_animated_sprite.play("run")  
+		_animated_sprite.play("run")
+		_animated_sprite.scale = Vector2(1.0, 1.0)
+		_animated_sprite.offset = Vector2(0, 0)
 	else:
 		_animated_sprite.play("stop")
-	else:
-		_animated_sprite.play("punch")
-	else:
-		_animated_sprite.play("kick")
-	else:
-		_animated_sprite.play("jump_punch")
-	else:
-		_animated_sprite.play("jump_kick")
-	else:
-		_animated_sprite.play("block")
+		_animated_sprite.scale = Vector2(1.0, 1.0)
+		_animated_sprite.offset = Vector2(0, 0)

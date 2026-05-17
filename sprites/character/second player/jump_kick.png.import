@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cxbhsaearph7l"
-path="res://.godot/imported/jump_kick].png-95ccfb12b0968162a079fbfb89eb9ece.ctex"
+uid="uid://b7ni7lygbvki3"
+path="res://.godot/imported/jump_kick.png-9cfb80b48741532765ed6d28ff75d2b1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/character/second player/jump_kick].png"
-dest_files=["res://.godot/imported/jump_kick].png-95ccfb12b0968162a079fbfb89eb9ece.ctex"]
+source_file="res://sprites/character/second player/jump_kick.png"
+dest_files=["res://.godot/imported/jump_kick.png-9cfb80b48741532765ed6d28ff75d2b1.ctex"]
 
 [params]
 
