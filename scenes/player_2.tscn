@@ -3,13 +3,26 @@
 [ext_resource type="Script" uid="uid://bpveao4vppjbf" path="res://scripts/player_2.gd" id="1_oc1kf"]
 [ext_resource type="Texture2D" uid="uid://dlhb42win6lfq" path="res://sprites/character/second player/fight_pose2.png" id="1_yjax8"]
 [ext_resource type="Texture2D" uid="uid://coegrywlp45a5" path="res://sprites/character/second player/stopped.png" id="2_0mr0g"]
-[ext_resource type="Texture2D" uid="uid://ltpc5yabxkfw" path="res://sprites/character/second player/fight_pose.png" id="2_oc1kf"]
 [ext_resource type="Texture2D" uid="uid://c8de76j3jxhj1" path="res://sprites/character/second player/jump.png" id="2_v7tvf"]
 [ext_resource type="Texture2D" uid="uid://cy5ocvoipmq4f" path="res://sprites/character/second player/fight_pose3.png" id="3_0mr0g"]
+[ext_resource type="Texture2D" uid="uid://14uvxki17yei" path="res://sprites/character/second player/punch_1.png" id="3_t4bc4"]
+[ext_resource type="Texture2D" uid="uid://yj0nooc7kaq3" path="res://sprites/character/second player/punch_2.png" id="4_wtgcc"]
+[ext_resource type="Texture2D" uid="uid://5w3jpmwhdy1c" path="res://sprites/character/second player/shift.png" id="5_jbo5h"]
+[ext_resource type="Texture2D" uid="uid://don50f1ylbwr" path="res://sprites/character/second player/shock.png" id="6_60kbs"]
+[ext_resource type="Texture2D" uid="uid://cf1oue8hjbvil" path="res://sprites/character/second player/shock2.png" id="7_3ooxp"]
+[ext_resource type="Texture2D" uid="uid://b83mdhgbfljfh" path="res://sprites/character/second player/fly_shock1.png" id="8_ab820"]
+[ext_resource type="Texture2D" uid="uid://dq5ahc28xcn3y" path="res://sprites/character/second player/down.png" id="9_wtgcc"]
+[ext_resource type="Texture2D" uid="uid://dovh6x3d4ydfu" path="res://sprites/character/second player/fight_pose4.png" id="14_60kbs"]
+[ext_resource type="Texture2D" uid="uid://bw8436tjljtd0" path="res://sprites/character/second player/fight_pose5.png" id="15_3ooxp"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_v7tvf"]
 resource_name = "walk"
 animations = [{
+"frames": [],
+"loop": true,
+"name": &"block",
+"speed": 5.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("2_v7tvf")
@@ -20,12 +33,58 @@ animations = [{
 }, {
 "frames": [],
 "loop": true,
-"name": &"kick",
+"name": &"jump kick",
 "speed": 5.0
 }, {
 "frames": [],
 "loop": true,
+"name": &"jump_punch",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"kick",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_t4bc4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_wtgcc")
+}],
+"loop": true,
 "name": &"punch",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_jbo5h")
+}],
+"loop": true,
+"name": &"shift",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"shift_kick",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_60kbs")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_3ooxp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_ab820")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_wtgcc")
+}],
+"loop": true,
+"name": &"shock",
 "speed": 5.0
 }, {
 "frames": [{
@@ -38,13 +97,16 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("1_yjax8")
+"texture": ExtResource("14_60kbs")
 }, {
 "duration": 1.0,
-"texture": ExtResource("2_oc1kf")
+"texture": ExtResource("15_3ooxp")
 }, {
 "duration": 1.0,
 "texture": ExtResource("3_0mr0g")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_yjax8")
 }],
 "loop": true,
 "name": &"walk",
@@ -61,7 +123,9 @@ script = ExtResource("1_oc1kf")
 [node name="Moves" type="AnimatedSprite2D" parent="." unique_id=570971162]
 scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_v7tvf")
-animation = &"kick"
+animation = &"walk"
+frame = 2
+frame_progress = 0.77916944
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2134461329]
 shape = SubResource("CapsuleShape2D_oc1kf")
