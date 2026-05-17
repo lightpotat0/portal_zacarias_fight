@@ -8,6 +8,8 @@ const GRAVITY_SCALE = 3
 const FALL_GRAVITY_SCALE = 5.0
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 var agachado = false
+var atacando = false
+var animacao_ataque = ""
 
 func _physics_process(delta):
 	if not is_on_floor():
@@ -16,7 +18,7 @@ func _physics_process(delta):
 		else:
 			velocity.y += gravity * FALL_GRAVITY_SCALE * delta
 
-	if (Input.is_action_just_pressed("ui_up") or Input.is_action_just_pressed("x")) and is_on_floor():
+	if Input.is_action_just_pressed("x") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 		_animated_sprite.play("jump")
 		agachado = false
@@ -25,6 +27,16 @@ func _physics_process(delta):
 		agachado = true
 	if Input.is_action_just_released("ui_down"):
 		agachado = false
+		
+	if Input.is_action_just_pressed("quadrado"):
+		atacando = true
+		animacao_ataque = "punch"
+	elif Input.is_action_just_pressed("triangulo"):
+		atacando = true
+		animacao_ataque = "kick"
+	elif Input.is_action_just_pressed("o"):
+		atacando = true
+		animacao_ataque = "block"
 		
 	var direction := Input.get_axis("ui_left", "ui_right")
 	if direction:
@@ -50,19 +62,15 @@ func _physics_process(delta):
 		_animated_sprite.scale = Vector2(1.3, 1.3)
 		_animated_sprite.offset = Vector2(0, -10)
 	elif direction != 0:
-		_animated_sprite.play("run")
+		_animated_sprite.play("walk")
 		_animated_sprite.scale = Vector2(1.0, 1.0)
 		_animated_sprite.offset = Vector2(0, 0)
 	elif agachado:
 		_animated_sprite.play("shift")
 		_animated_sprite.scale = Vector2(1.0, 1.0)
 		_animated_sprite.offset = Vector2(0, 0)
-	elif punch:
-		_animated_sprite.play("shift")
-		_animated_sprite.scale = Vector2(1.0, 1.0)
-		_animated_sprite.offset = Vector2(0, 0)
-	elif kick:
-		_animated_sprite.play("shift")
+	elif atacando:
+		_animated_sprite.play(animacao_ataque)
 		_animated_sprite.scale = Vector2(1.0, 1.0)
 		_animated_sprite.offset = Vector2(0, 0)
 	else:
