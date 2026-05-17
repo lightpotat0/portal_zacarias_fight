@@ -7,11 +7,13 @@ const JUMP_VELOCITY = -400.0
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
 func _physics_process(delta):
+	_animated_sprite.play("stop")
 	if not is_on_floor():
 		velocity.y += gravity * delta
 
 	if Input.is_action_just_pressed("ui_up") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
+		_animated_sprite.play("jump") 
 	var direction := Input.get_axis("ui_left", "ui_right")
 	if direction:
 		velocity.x = direction * SPEED
@@ -28,4 +30,4 @@ func _physics_process(delta):
 	elif direction != 0:
 		_animated_sprite.play("run")  
 	else:
-		_animated_sprite.play("idle")
+		_animated_sprite.play("stop")
