@@ -7,6 +7,7 @@ const JUMP_VELOCITY = -1300.0
 const GRAVITY_SCALE = 3
 const FALL_GRAVITY_SCALE = 5.0
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
+var agachado = false
 
 func _physics_process(delta):
 	if not is_on_floor():
@@ -15,9 +16,15 @@ func _physics_process(delta):
 		else:
 			velocity.y += gravity * FALL_GRAVITY_SCALE * delta
 
-	if Input.is_action_just_pressed("ui_up") and is_on_floor():
+	if (Input.is_action_just_pressed("ui_up") or Input.is_action_just_pressed("x")) and is_on_floor():
 		velocity.y = JUMP_VELOCITY
-		_animated_sprite.play("jump") 
+		_animated_sprite.play("jump")
+		agachado = false
+		
+	if Input.is_action_just_pressed("ui_down") and is_on_floor():
+		agachado = true
+	if Input.is_action_just_released("ui_down"):
+		agachado = false
 		
 	var direction := Input.get_axis("ui_left", "ui_right")
 	if direction:
@@ -27,9 +34,15 @@ func _physics_process(delta):
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		_animated_sprite.play("walk")
-	if Input.is_action_just_pressed("ui_down") and is_on_floor():
-		_animated_sprite.play("shift")
 
+	var direction2 := Input.get_axis("left", "right")
+	if direction2:
+		velocity.x = direction * SPEED
+		_animated_sprite.flip_h = direction > 0
+		_animated_sprite.play("walk")
+	else:
+		velocity.x = move_toward(velocity.x, 0, SPEED)
+		_animated_sprite.play("walk")
 	move_and_slide()
 	
 	if not is_on_floor():
@@ -38,6 +51,18 @@ func _physics_process(delta):
 		_animated_sprite.offset = Vector2(0, -10)
 	elif direction != 0:
 		_animated_sprite.play("run")
+		_animated_sprite.scale = Vector2(1.0, 1.0)
+		_animated_sprite.offset = Vector2(0, 0)
+	elif agachado:
+		_animated_sprite.play("shift")
+		_animated_sprite.scale = Vector2(1.0, 1.0)
+		_animated_sprite.offset = Vector2(0, 0)
+	elif punch:
+		_animated_sprite.play("shift")
+		_animated_sprite.scale = Vector2(1.0, 1.0)
+		_animated_sprite.offset = Vector2(0, 0)
+	elif kick:
+		_animated_sprite.play("shift")
 		_animated_sprite.scale = Vector2(1.0, 1.0)
 		_animated_sprite.offset = Vector2(0, 0)
 	else:
