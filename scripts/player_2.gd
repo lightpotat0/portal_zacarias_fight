@@ -31,3 +31,13 @@ func _physics_process(delta):
 		_animated_sprite.play("run")  
 	else:
 		_animated_sprite.play("stop")
+	else:
+		_animated_sprite.play("punch")
+	else:
+		_animated_sprite.play("kick")
+	else:
+		_animated_sprite.play("jump_punch")
+	else:
+		_animated_sprite.play("jump_kick")
+	else:
+		_animated_sprite.play("block")
