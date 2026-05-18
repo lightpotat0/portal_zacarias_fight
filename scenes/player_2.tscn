@@ -5,22 +5,67 @@
 [ext_resource type="Texture2D" uid="uid://coegrywlp45a5" path="res://sprites/character/second player/stopped.png" id="2_0mr0g"]
 [ext_resource type="Texture2D" uid="uid://c8de76j3jxhj1" path="res://sprites/character/second player/jump.png" id="2_v7tvf"]
 [ext_resource type="Texture2D" uid="uid://cy5ocvoipmq4f" path="res://sprites/character/second player/fight_pose3.png" id="3_0mr0g"]
+[ext_resource type="Texture2D" uid="uid://4n7isk5xni6v" path="res://sprites/character/second player/shield.png" id="3_px0wr"]
 [ext_resource type="Texture2D" uid="uid://14uvxki17yei" path="res://sprites/character/second player/punch_1.png" id="3_t4bc4"]
+[ext_resource type="Texture2D" uid="uid://dlbvx5f5p32b1" path="res://sprites/character/second player/fatality1.png" id="4_o4b1a"]
 [ext_resource type="Texture2D" uid="uid://yj0nooc7kaq3" path="res://sprites/character/second player/punch_2.png" id="4_wtgcc"]
+[ext_resource type="Texture2D" uid="uid://cj1a08msty715" path="res://sprites/character/second player/fatality2.png" id="5_4i2x3"]
 [ext_resource type="Texture2D" uid="uid://5w3jpmwhdy1c" path="res://sprites/character/second player/shift.png" id="5_jbo5h"]
 [ext_resource type="Texture2D" uid="uid://don50f1ylbwr" path="res://sprites/character/second player/shock.png" id="6_60kbs"]
+[ext_resource type="Texture2D" uid="uid://b7fcyd82urmcg" path="res://sprites/character/second player/fatality3.png" id="6_bwxop"]
 [ext_resource type="Texture2D" uid="uid://cf1oue8hjbvil" path="res://sprites/character/second player/shock2.png" id="7_3ooxp"]
+[ext_resource type="Texture2D" uid="uid://b7ni7lygbvki3" path="res://sprites/character/second player/jump_kick.png" id="8_7ls7h"]
 [ext_resource type="Texture2D" uid="uid://b83mdhgbfljfh" path="res://sprites/character/second player/fly_shock1.png" id="8_ab820"]
+[ext_resource type="Texture2D" uid="uid://c83765too52gf" path="res://sprites/character/second player/jump_punch.png" id="9_62sk5"]
 [ext_resource type="Texture2D" uid="uid://dq5ahc28xcn3y" path="res://sprites/character/second player/down.png" id="9_wtgcc"]
+[ext_resource type="Texture2D" uid="uid://cpx8cennm1nsu" path="res://sprites/character/second player/kick1.png" id="10_56hbl"]
+[ext_resource type="Texture2D" uid="uid://cp3ky1ehib5i5" path="res://sprites/character/second player/kick2.png" id="11_0wooj"]
 [ext_resource type="Texture2D" uid="uid://dovh6x3d4ydfu" path="res://sprites/character/second player/fight_pose4.png" id="14_60kbs"]
+[ext_resource type="Texture2D" uid="uid://c6kco23dou0ut" path="res://sprites/character/second player/shift_kick.png" id="15_1iq1k"]
 [ext_resource type="Texture2D" uid="uid://bw8436tjljtd0" path="res://sprites/character/second player/fight_pose5.png" id="15_3ooxp"]
+[ext_resource type="Texture2D" uid="uid://bb2k0i1ntot54" path="res://sprites/character/second player/shift_punch.png" id="16_o6bkt"]
+[ext_resource type="Texture2D" uid="uid://b24od2c6ppg1g" path="res://sprites/character/second player/loser.png" id="20_gnsm5"]
+[ext_resource type="Texture2D" uid="uid://n0mgrumnqwwc" path="res://sprites/character/second player/shuriken.png" id="21_3pubf"]
+[ext_resource type="Texture2D" uid="uid://d3tkj7j4fa6ca" path="res://sprites/character/second player/light_gun.png" id="22_f0nq0"]
+[ext_resource type="Texture2D" uid="uid://chesulaomg4m3" path="res://sprites/character/second player/win.png" id="28_c7hif"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_v2a8p"]
+load_path = "res://.godot/imported/big_damage.png-2523ae2c6cda06cfe8521f1e2ba9053a.ctex"
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_v7tvf"]
 resource_name = "walk"
 animations = [{
-"frames": [],
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("CompressedTexture2D_v2a8p")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_wtgcc")
+}],
+"loop": true,
+"name": &"bigdamage",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_px0wr")
+}],
 "loop": true,
 "name": &"block",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_o4b1a")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_4i2x3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_bwxop")
+}],
+"loop": true,
+"name": &"fatality",
 "speed": 5.0
 }, {
 "frames": [{
@@ -31,17 +76,29 @@ animations = [{
 "name": &"jump",
 "speed": 5.0
 }, {
-"frames": [],
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("8_7ls7h")
+}],
 "loop": true,
 "name": &"jump kick",
 "speed": 5.0
 }, {
-"frames": [],
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("9_62sk5")
+}],
 "loop": true,
 "name": &"jump_punch",
 "speed": 5.0
 }, {
-"frames": [],
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("10_56hbl")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_0wooj")
+}],
 "loop": true,
 "name": &"kick",
 "speed": 5.0
@@ -65,9 +122,20 @@ animations = [{
 "name": &"shift",
 "speed": 5.0
 }, {
-"frames": [],
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("15_1iq1k")
+}],
 "loop": true,
 "name": &"shift_kick",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("16_o6bkt")
+}],
+"loop": true,
+"name": &"shift_punch",
 "speed": 5.0
 }, {
 "frames": [{
@@ -81,10 +149,29 @@ animations = [{
 "texture": ExtResource("8_ab820")
 }, {
 "duration": 1.0,
+"texture": ExtResource("20_gnsm5")
+}, {
+"duration": 1.0,
 "texture": ExtResource("9_wtgcc")
 }],
 "loop": true,
 "name": &"shock",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("21_3pubf")
+}],
+"loop": true,
+"name": &"shuriken",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("22_f0nq0")
+}],
+"loop": true,
+"name": &"special",
 "speed": 5.0
 }, {
 "frames": [{
@@ -111,6 +198,17 @@ animations = [{
 "loop": true,
 "name": &"walk",
 "speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_0mr0g")
+}, {
+"duration": 1.0,
+"texture": ExtResource("28_c7hif")
+}],
+"loop": true,
+"name": &"win",
+"speed": 5.0
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_oc1kf"]
@@ -123,7 +221,7 @@ script = ExtResource("1_oc1kf")
 [node name="Moves" type="AnimatedSprite2D" parent="." unique_id=570971162]
 scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_v7tvf")
-animation = &"shift"
+animation = &"bigdamage"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2134461329]
 shape = SubResource("CapsuleShape2D_oc1kf")
