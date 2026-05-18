@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 @onready var _animated_sprite = $Moves
+@onready var collision = $CollisionShape2D
 
 const SPEED = 500.0
 const JUMP_VELOCITY = -1300.0
@@ -10,6 +11,9 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 var agachado = false
 var atacando = false
 var animacao_ataque = ""
+
+func _ready():
+	ajustar_colisao_ao_sprite()
 
 func _physics_process(delta):
 	if not is_on_floor():
@@ -77,3 +81,10 @@ func _physics_process(delta):
 		_animated_sprite.play("stop")
 		_animated_sprite.scale = Vector2(1.0, 1.0)
 		_animated_sprite.offset = Vector2(0, 0)
+		
+func ajustar_colisao_ao_sprite():
+	var tamanho_sprite = _animated_sprite.texture.get_size()
+	tamanho_sprite *= _animated_sprite.scale
+	
+	if collision.shape is RectangleShape2D:
+		collision.shape.size = tamanho_sprite
