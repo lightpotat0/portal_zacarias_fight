@@ -83,7 +83,6 @@ func _physics_process(delta):
 	if not is_on_floor():
 		if Input.is_action_pressed("quadrado"):
 			_animated_sprite.play("jump_punch")
-			# Escala maior para jump_punch
 			_animated_sprite.scale = Vector2(1.6, 1.6)
 			_animated_sprite.offset = Vector2(0, -15)
 		elif Input.is_action_pressed("triangulo"):
