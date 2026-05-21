@@ -18,86 +18,87 @@ func _ready():
 	ajustar_colisao_ao_sprite()
 
 func _physics_process(delta):
+	# Gravidade
 	if not is_on_floor():
 		if velocity.y < 0:
 			velocity.y += gravity * GRAVITY_SCALE * delta
 		else:
 			velocity.y += gravity * FALL_GRAVITY_SCALE * delta
 
-	if (Input.is_action_just_pressed("x") or Input.is_action_just_pressed("ui_accept") or Input.is_action_just_pressed("ui_up")) and is_on_floor():
+	# Pulo e Ataques Aéreos (Detecta se acabou de apertar o pulo)
+	if Input.is_action_just_pressed("x") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 		_animated_sprite.play("jump")
 		agachado = false
-		if (Input.is_action_just_pressed("x") or Input.is_action_just_pressed("ui_accept")) and (Input.is_action_just_pressed("quadrado") or Input.is_action_just_pressed("ui_focus_next")):
-			_animated_sprite.play("jump_punch")	
-		if (Input.is_action_just_pressed("x") or Input.is_action_just_pressed("ui_accept")) and (Input.is_action_just_pressed("triangulo") or Input.is_action_just_pressed("ui_text_backspace")):
-			_animated_sprite.play("jump kick")	
-			
-	if Input.get_axis("left", "right") and is_on_floor():
-		velocity.y = JUMP_VELOCITY
-		_animated_sprite.play("block")
-		bloqueando = true 
-		
-	if (Input.is_action_just_pressed("baixo") or Input.is_action_just_pressed("ui_down")) and is_on_floor():
-		agachado = true
-		if (Input.is_action_just_pressed("baixo") or Input.is_action_just_pressed("ui_down")) and Input.is_action_just_pressed("triangulo"):
-			_animated_sprite.play("shift_kick")	
 	
-	if Input.is_action_just_released("baixo") or Input.is_action_just_released("ui_down"):
+	# Ataques no ar (Mudado para 'is_action_pressed' para o caso de segurar o botão antes)
+	if not is_on_floor():
+		if Input.is_action_pressed("quadrado"):
+			_animated_sprite.play("jump_punch")	
+		elif Input.is_action_pressed("triangulo"):
+			_animated_sprite.play("jump kick")	
+		
+	# Agachar (Funciona enquanto mantiver pressionado)
+	if Input.is_action_pressed("down") and is_on_floor():
+		agachado = true
+		if Input.is_action_pressed("triangulo"):
+			_animated_sprite.play("shift_kick")	
+	else:
 		agachado = false
 		
-	if Input.is_action_just_pressed("quadrado") or Input.is_action_just_pressed("ui_focus_next"): 
-		atacando = true
-		bloqueando = false
-		animacao_ataque = "punch"
-	elif Input.is_action_just_pressed("triangulo") or Input.is_action_just_pressed("ui_text_backspace"): 
-		atacando = true
-		bloqueando = false
-		animacao_ataque = "kick"
-	elif Input.is_action_just_pressed("o") or Input.is_action_just_pressed("ui_cancel"): 
-		atacando = true
-		bloqueando = false
-		animacao_ataque = "block"
-	elif is_on_floor() and not Input.get_axis("ui_left", "ui_right") and not Input.get_axis("left", "right"):
-		atacando = false
+	# Ataques e Bloqueio no Chão (Mudado para 'is_action_pressed' para funcionar enquanto segura)
+	if is_on_floor() and not agachado:
+		if Input.is_action_pressed("quadrado"): 
+			atacando = true
+			bloqueando = false
+			animacao_ataque = "punch"
+		elif Input.is_action_pressed("triangulo"): 
+			atacando = true
+			bloqueando = false
+			animacao_ataque = "kick"
+		elif Input.is_action_pressed("o"): 
+			atacando = false
+			bloqueando = true
+			animacao_ataque = "block"
+		else:
+			atacando = false
+			bloqueando = false
 
-	var direction := Input.get_axis("ui_left", "ui_right")
-	var direction2 := Input.get_axis("left", "right")
+	# Movimentação Horizontal (Apenas se não estiver defendendo ou atacando no chão)
+	var direction := Input.get_axis("left", "right")
 	
-	var direcao_final = direction if direction != 0 else direction2
-	
-	if direcao_final != 0:
-		velocity.x = direcao_final * SPEED
-		_animated_sprite.flip_h = direcao_final > 0
+	if direction != 0 and not bloqueando and not (atacando and is_on_floor()):
+		velocity.x = direction * SPEED
+		_animated_sprite.flip_h = direction > 0
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		
 	move_and_slide()
 	
+	# Máquina de Estados de Animação
 	if not is_on_floor():
-		_animated_sprite.play("jump")
+		# Se já não estiver passando a animação de soco/chute aéreo, usa o pulo padrão
+		if _animated_sprite.animation != "jump_punch" and _animated_sprite.animation != "jump kick":
+			_animated_sprite.play("jump")
 		_animated_sprite.scale = Vector2(1.3, 1.3)
 		_animated_sprite.offset = Vector2(0, -10)
-	elif direcao_final != 0: 
-		_animated_sprite.play("walk")
-		_animated_sprite.scale = Vector2(1.0, 1.0)
-		_animated_sprite.offset = Vector2(0, 0)
-	elif agachado:
-		_animated_sprite.play("shift")
-		_animated_sprite.scale = Vector2(1.0, 1.0)
-		_animated_sprite.offset = Vector2(0, 0)
-	elif atacando:
-		_animated_sprite.play(animacao_ataque)
-		_animated_sprite.scale = Vector2(1.0, 1.0)
-		_animated_sprite.offset = Vector2(0, 0)
-	elif bloqueando:
-		_animated_sprite.play(animacao_ataque)
-		_animated_sprite.scale = Vector2(1.0, 1.0)
-		_animated_sprite.offset = Vector2(0, 0)
 	else:
-		_animated_sprite.play("stop")
 		_animated_sprite.scale = Vector2(1.0, 1.0)
 		_animated_sprite.offset = Vector2(0, 0)
+		
+		if agachado:
+			if Input.is_action_pressed("triangulo"):
+				_animated_sprite.play("shift_kick")
+			else:
+				_animated_sprite.play("shift")
+		elif atacando:
+			_animated_sprite.play(animacao_ataque)
+		elif bloqueando:
+			_animated_sprite.play(animacao_ataque)
+		elif direction != 0: 
+			_animated_sprite.play("walk")
+		else:
+			_animated_sprite.play("stop")
 		
 func ajustar_colisao_ao_sprite():
 	var anim_atual = _animated_sprite.animation
