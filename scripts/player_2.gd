@@ -11,7 +11,7 @@ const FALL_GRAVITY_SCALE = 5.0
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 var agachado = false
 var atacando = false
-var bloqueando = true
+var bloqueando = false 
 var animacao_ataque = ""
 
 func _ready():
@@ -24,53 +24,53 @@ func _physics_process(delta):
 		else:
 			velocity.y += gravity * FALL_GRAVITY_SCALE * delta
 
-	if Input.is_action_just_pressed("x") and is_on_floor():
+	if (Input.is_action_just_pressed("x") or Input.is_action_just_pressed("ui_accept") or Input.is_action_just_pressed("ui_up")) and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 		_animated_sprite.play("jump")
 		agachado = false
-		if Input.is_action_just_pressed("x") and Input.is_action_just_pressed("quadrado"):
+		if (Input.is_action_just_pressed("x") or Input.is_action_just_pressed("ui_accept")) and (Input.is_action_just_pressed("quadrado") or Input.is_action_just_pressed("ui_focus_next")):
 			_animated_sprite.play("jump_punch")	
-		if Input.is_action_just_pressed("x") and Input.is_action_just_pressed("triangulo"):
+		if (Input.is_action_just_pressed("x") or Input.is_action_just_pressed("ui_accept")) and (Input.is_action_just_pressed("triangulo") or Input.is_action_just_pressed("ui_text_backspace")):
 			_animated_sprite.play("jump kick")	
 			
 	if Input.get_axis("left", "right") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 		_animated_sprite.play("block")
-		bloqueando = true
+		bloqueando = true 
 		
-	if Input.is_action_just_pressed("baixo") and is_on_floor():
+	if (Input.is_action_just_pressed("baixo") or Input.is_action_just_pressed("ui_down")) and is_on_floor():
 		agachado = true
-		if Input.is_action_just_pressed("baixo") and Input.is_action_just_pressed("triangulo"):
+		if (Input.is_action_just_pressed("baixo") or Input.is_action_just_pressed("ui_down")) and Input.is_action_just_pressed("triangulo"):
 			_animated_sprite.play("shift_kick")	
-		
-	if Input.is_action_just_pressed("quadrado"):
-		atacando = true
-		animacao_ataque = "punch"
-	elif Input.is_action_just_pressed("triangulo"):
-		atacando = true
-		animacao_ataque = "kick"
-	elif Input.is_action_just_pressed("o"):
-		atacando = true
-		animacao_ataque = "block"
-		
-	var direction := Input.get_axis("ui_left", "ui_right")
 	
-	if direction:
-		velocity.x = direction * SPEED
-		_animated_sprite.flip_h = direction > 0
-		_animated_sprite.play("walk")
-	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-		_animated_sprite.play("walk")
+	if Input.is_action_just_released("baixo") or Input.is_action_just_released("ui_down"):
+		agachado = false
+		
+	if Input.is_action_just_pressed("quadrado") or Input.is_action_just_pressed("ui_focus_next"): 
+		atacando = true
+		bloqueando = false
+		animacao_ataque = "punch"
+	elif Input.is_action_just_pressed("triangulo") or Input.is_action_just_pressed("ui_text_backspace"): 
+		atacando = true
+		bloqueando = false
+		animacao_ataque = "kick"
+	elif Input.is_action_just_pressed("o") or Input.is_action_just_pressed("ui_cancel"): 
+		atacando = true
+		bloqueando = false
+		animacao_ataque = "block"
+	elif is_on_floor() and not Input.get_axis("ui_left", "ui_right") and not Input.get_axis("left", "right"):
+		atacando = false
 
+	var direction := Input.get_axis("ui_left", "ui_right")
 	var direction2 := Input.get_axis("left", "right")
-	if direction2:
-		velocity.x = direction * SPEED
-		_animated_sprite.flip_h = direction > 0
-		_animated_sprite.play("walk")
+	
+	var direcao_final = direction if direction != 0 else direction2
+	
+	if direcao_final != 0:
+		velocity.x = direcao_final * SPEED
+		_animated_sprite.flip_h = direcao_final > 0
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
-		_animated_sprite.play("walk")
 		
 	move_and_slide()
 	
@@ -78,7 +78,7 @@ func _physics_process(delta):
 		_animated_sprite.play("jump")
 		_animated_sprite.scale = Vector2(1.3, 1.3)
 		_animated_sprite.offset = Vector2(0, -10)
-	elif direction != 0:
+	elif direcao_final != 0: 
 		_animated_sprite.play("walk")
 		_animated_sprite.scale = Vector2(1.0, 1.0)
 		_animated_sprite.offset = Vector2(0, 0)
@@ -100,8 +100,13 @@ func _physics_process(delta):
 		_animated_sprite.offset = Vector2(0, 0)
 		
 func ajustar_colisao_ao_sprite():
-	var tamanho_sprite = _animated_sprite.texture.get_size()
-	tamanho_sprite *= _animated_sprite.scale
+	var anim_atual = _animated_sprite.animation
+	var frame_atual = _animated_sprite.frame
+	var textura_frame = _animated_sprite.sprite_frames.get_frame_texture(anim_atual, frame_atual)
 	
-	if collision.shape is RectangleShape2D:
-		collision.shape.size = tamanho_sprite
+	if textura_frame:
+		var tamanho_sprite = textura_frame.get_size()
+		tamanho_sprite *= _animated_sprite.scale
+		
+		if collision.shape is RectangleShape2D:
+			collision.shape.size = tamanho_sprite
