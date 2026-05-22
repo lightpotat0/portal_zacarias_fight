@@ -3,7 +3,7 @@ extends CharacterBody2D
 @onready var _animated_sprite = $Moves
 @onready var collision = $CollisionShape2D
 
-const SPEED = 500.0
+const SPEED = 250.0
 const JUMP_VELOCITY = -1300.0
 const GRAVITY_SCALE = 3
 const FALL_GRAVITY_SCALE = 5.0
@@ -11,7 +11,7 @@ const FALL_GRAVITY_SCALE = 5.0
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 var agachado = false
 var atacando = false
-var bloqueando = true
+var bloqueando = false 
 var animacao_ataque = ""
 
 func _ready():
@@ -26,82 +26,100 @@ func _physics_process(delta):
 
 	if Input.is_action_just_pressed("x") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
-		_animated_sprite.play("jump")
 		agachado = false
-		if Input.is_action_just_pressed("x") and Input.is_action_just_pressed("quadrado"):
-			_animated_sprite.play("jump_punch")	
-		if Input.is_action_just_pressed("x") and Input.is_action_just_pressed("triangulo"):
-			_animated_sprite.play("jump kick")	
-			
-	if Input.get_axis("left", "right") and is_on_floor():
-		velocity.y = JUMP_VELOCITY
-		_animated_sprite.play("block")
-		bloqueando = true
+		atacando = false
+		bloqueando = false
 		
-	if Input.is_action_just_pressed("baixo") and is_on_floor():
+	if Input.is_action_pressed("down") and is_on_floor():
 		agachado = true
-		if Input.is_action_just_pressed("baixo") and Input.is_action_just_pressed("triangulo"):
-			_animated_sprite.play("shift_kick")	
-		
-	if Input.is_action_just_pressed("quadrado"):
-		atacando = true
-		animacao_ataque = "punch"
-	elif Input.is_action_just_pressed("triangulo"):
-		atacando = true
-		animacao_ataque = "kick"
-	elif Input.is_action_just_pressed("o"):
-		atacando = true
-		animacao_ataque = "block"
-		
-	var direction := Input.get_axis("ui_left", "ui_right")
-	
-	if direction:
-		velocity.x = direction * SPEED
-		_animated_sprite.flip_h = direction > 0
-		_animated_sprite.play("walk")
 	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-		_animated_sprite.play("walk")
+		agachado = false
+		
+	if is_on_floor() and not agachado:
+		if Input.is_action_pressed("quadrado"):
+			atacando = true
+			bloqueando = false
+			animacao_ataque = "punch"
+		elif Input.is_action_pressed("triangulo"):
+			atacando = true
+			bloqueando = false
+			animacao_ataque = "kick"
+		elif Input.is_action_pressed("o"):
+			atacando = false
+			bloqueando = true
+			animacao_ataque = "block"
+		else:
+			atacando = false
+			bloqueando = false
+		
+		
+	if is_on_floor() and not agachado:
+		if Input.is_action_pressed("quadrado"): 
+			atacando = true
+			bloqueando = false
+			animacao_ataque = "punch"
+		elif Input.is_action_pressed("triangulo"): 
+			atacando = true
+			bloqueando = false
+			animacao_ataque = "kick"
+		elif Input.is_action_pressed("o"): 
+			atacando = false
+			bloqueando = true
+			animacao_ataque = "block"
+		else:
+			atacando = false
+			bloqueando = false
 
-	var direction2 := Input.get_axis("left", "right")
-	if direction2:
+	var direction := Input.get_axis("left", "right")
+
+	if direction != 0 and not bloqueando and not agachado and not (atacando and is_on_floor()):
 		velocity.x = direction * SPEED
 		_animated_sprite.flip_h = direction > 0
-		_animated_sprite.play("walk")
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
-		_animated_sprite.play("walk")
-		
+
 	move_and_slide()
 	
 	if not is_on_floor():
-		_animated_sprite.play("jump")
-		_animated_sprite.scale = Vector2(1.3, 1.3)
-		_animated_sprite.offset = Vector2(0, -10)
-	elif direction != 0:
-		_animated_sprite.play("walk")
-		_animated_sprite.scale = Vector2(1.0, 1.0)
-		_animated_sprite.offset = Vector2(0, 0)
-	elif agachado:
-		_animated_sprite.play("shift")
-		_animated_sprite.scale = Vector2(1.0, 1.0)
-		_animated_sprite.offset = Vector2(0, 0)
-	elif atacando:
-		_animated_sprite.play(animacao_ataque)
-		_animated_sprite.scale = Vector2(1.0, 1.0)
-		_animated_sprite.offset = Vector2(0, 0)
-	elif bloqueando:
-		_animated_sprite.play(animacao_ataque)
-		_animated_sprite.scale = Vector2(1.0, 1.0)
-		_animated_sprite.offset = Vector2(0, 0)
+		if Input.is_action_pressed("quadrado"):
+			_animated_sprite.play("jump_punch")
+			_animated_sprite.scale = Vector2(1.6, 1.6)
+			_animated_sprite.offset = Vector2(0, -15)
+		elif Input.is_action_pressed("triangulo"):
+			_animated_sprite.play("jump kick")
+			_animated_sprite.scale = Vector2(0.8, 0.8)
+			_animated_sprite.offset = Vector2(0, -15)
+		else:
+			_animated_sprite.play("jump")
+			_animated_sprite.scale = Vector2(1.3, 1.3)
+			_animated_sprite.offset = Vector2(0, -10)
 	else:
-		_animated_sprite.play("stop")
 		_animated_sprite.scale = Vector2(1.0, 1.0)
 		_animated_sprite.offset = Vector2(0, 0)
+
+		if agachado:
+			if Input.is_action_pressed("triangulo"):
+				_animated_sprite.play("shift_kick")
+			else:
+				_animated_sprite.play("shift")
+		elif atacando:
+			_animated_sprite.play(animacao_ataque)
+		elif bloqueando:
+			_animated_sprite.play(animacao_ataque)
+		elif direction != 0:
+			_animated_sprite.play("walk")
+		else:
+			_animated_sprite.play("stop")
+
 		
 func ajustar_colisao_ao_sprite():
-	var tamanho_sprite = _animated_sprite.texture.get_size()
-	tamanho_sprite *= _animated_sprite.scale
+	var anim_atual = _animated_sprite.animation
+	var frame_atual = _animated_sprite.frame
+	var textura_frame = _animated_sprite.sprite_frames.get_frame_texture(anim_atual, frame_atual)
 	
-	if collision.shape is RectangleShape2D:
-		collision.shape.size = tamanho_sprite
+	if textura_frame:
+		var tamanho_sprite = textura_frame.get_size()
+		tamanho_sprite *= _animated_sprite.scale
+		
+		if collision.shape is RectangleShape2D:
+			collision.shape.size = tamanho_sprite
