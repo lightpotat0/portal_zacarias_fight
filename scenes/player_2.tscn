@@ -147,6 +147,7 @@ radius = 77.0
 height = 302.0
 
 [node name="Player2" type="CharacterBody2D" unique_id=454800802]
+scale = Vector2(0.8, 0.8)
 script = ExtResource("1_oc1kf")
 
 [node name="Moves" type="AnimatedSprite2D" parent="." unique_id=570971162]
