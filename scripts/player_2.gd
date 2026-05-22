@@ -30,28 +30,10 @@ func _physics_process(delta):
 		atacando = false
 		bloqueando = false
 		
-	if Input.is_action_pressed("down") and is_on_floor():
+	if Input.is_action_pressed("baixo") and is_on_floor():
 		agachado = true
 	else:
 		agachado = false
-		
-	if is_on_floor() and not agachado:
-		if Input.is_action_pressed("quadrado"):
-			atacando = true
-			bloqueando = false
-			animacao_ataque = "punch"
-		elif Input.is_action_pressed("triangulo"):
-			atacando = true
-			bloqueando = false
-			animacao_ataque = "kick"
-		elif Input.is_action_pressed("o"):
-			atacando = false
-			bloqueando = true
-			animacao_ataque = "block"
-		else:
-			atacando = false
-			bloqueando = false
-		
 		
 	if is_on_floor() and not agachado:
 		if Input.is_action_pressed("quadrado"): 
@@ -72,9 +54,11 @@ func _physics_process(delta):
 
 	var direction := Input.get_axis("left", "right")
 
-	if direction != 0 and not bloqueando and not agachado and not (atacando and is_on_floor()):
+	if direction != 0:
 		velocity.x = direction * SPEED
 		_animated_sprite.flip_h = direction > 0
+	if direction != 0 and not bloqueando and not agachado and not (atacando and is_on_floor()):
+		velocity.x = direction * SPEED
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 
@@ -98,6 +82,9 @@ func _physics_process(delta):
 		_animated_sprite.offset = Vector2(0, 0)
 
 		if agachado:
+			_animated_sprite.scale = Vector2(1.0, 1.0)
+			_animated_sprite.offset = Vector2(0, 100) 
+			
 			if Input.is_action_pressed("triangulo"):
 				_animated_sprite.play("shift_kick")
 			else:
