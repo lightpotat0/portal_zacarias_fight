@@ -89,6 +89,8 @@ func _physics_process(delta):
 				_animated_sprite.play("shift_kick")
 			if Input.is_action_pressed("o"):
 				_animated_sprite.play("shift_block")
+			if Input.is_action_pressed("quadrado"):
+				_animated_sprite.play("shift_punch")
 			else:
 				_animated_sprite.play("shift")
 		elif atacando:

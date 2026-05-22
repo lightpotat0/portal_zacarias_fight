@@ -19,6 +19,7 @@
 [ext_resource type="Texture2D" uid="uid://dq5ahc28xcn3y" path="res://sprites/character/second player/down.png" id="9_wtgcc"]
 [ext_resource type="Texture2D" uid="uid://clrlccbth6ljb" path="res://sprites/character/second player/shift_block.png" id="11_ngtxa"]
 [ext_resource type="Texture2D" uid="uid://c6kco23dou0ut" path="res://sprites/character/second player/shift_kick.png" id="11_vo2i2"]
+[ext_resource type="Texture2D" uid="uid://bb2k0i1ntot54" path="res://sprites/character/second player/shift_punch.png" id="13_mu5be"]
 [ext_resource type="Texture2D" uid="uid://dovh6x3d4ydfu" path="res://sprites/character/second player/fight_pose4.png" id="14_60kbs"]
 [ext_resource type="Texture2D" uid="uid://bw8436tjljtd0" path="res://sprites/character/second player/fight_pose5.png" id="15_3ooxp"]
 
@@ -110,6 +111,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": ExtResource("13_mu5be")
+}],
+"loop": true,
+"name": &"shift_punch",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": ExtResource("6_60kbs")
 }, {
 "duration": 1.0,
@@ -162,7 +171,7 @@ script = ExtResource("1_oc1kf")
 [node name="Moves" type="AnimatedSprite2D" parent="." unique_id=570971162]
 scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_v7tvf")
-animation = &"shift_block"
+animation = &"shift_punch"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2134461329]
 shape = SubResource("CapsuleShape2D_oc1kf")
