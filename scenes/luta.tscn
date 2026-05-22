@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://bht7bhklshf38" path="res://scripts/camera_2d.gd" id="4_70woq"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ocv87"]
-size = Vector2(1109.5, 210.5)
+size = Vector2(1121.5, 96.81235)
 
 [node name="Luta" type="Node2D" unique_id=1745101218]
 
@@ -33,11 +33,24 @@ position = Vector2(1010, 356)
 
 [node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=815171004]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1742733883]
-position = Vector2(593, 754)
+[node name="Floor" type="CollisionShape2D" parent="StaticBody2D" unique_id=1742733883]
+position = Vector2(579.5, 643.9896)
 scale = Vector2(2, 2)
 shape = SubResource("RectangleShape2D_ocv87")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=102568668]
 position = Vector2(573, 321)
 script = ExtResource("4_70woq")
+
+[node name="wall_left" type="CollisionShape2D" parent="." unique_id=727209656]
+position = Vector2(-528.7314, -3.9897156)
+rotation = 1.5815187
+scale = Vector2(1.9123604, 1.912354)
+skew = 0.0020645857
+shape = SubResource("RectangleShape2D_ocv87")
+
+[node name="wall_right" type="CollisionShape2D" parent="." unique_id=1868107391]
+position = Vector2(1750.6985, -53.068153)
+rotation = -1.5695168
+scale = Vector2(1.9999994, -0.95617753)
+shape = SubResource("RectangleShape2D_ocv87")

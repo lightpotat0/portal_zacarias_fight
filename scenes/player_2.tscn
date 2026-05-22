@@ -17,6 +17,7 @@
 [ext_resource type="Texture2D" uid="uid://cp3ky1ehib5i5" path="res://sprites/character/second player/kick2.png" id="7_vxqa6"]
 [ext_resource type="Texture2D" uid="uid://b83mdhgbfljfh" path="res://sprites/character/second player/fly_shock1.png" id="8_ab820"]
 [ext_resource type="Texture2D" uid="uid://dq5ahc28xcn3y" path="res://sprites/character/second player/down.png" id="9_wtgcc"]
+[ext_resource type="Texture2D" uid="uid://clrlccbth6ljb" path="res://sprites/character/second player/shift_block.png" id="11_ngtxa"]
 [ext_resource type="Texture2D" uid="uid://c6kco23dou0ut" path="res://sprites/character/second player/shift_kick.png" id="11_vo2i2"]
 [ext_resource type="Texture2D" uid="uid://dovh6x3d4ydfu" path="res://sprites/character/second player/fight_pose4.png" id="14_60kbs"]
 [ext_resource type="Texture2D" uid="uid://bw8436tjljtd0" path="res://sprites/character/second player/fight_pose5.png" id="15_3ooxp"]
@@ -93,6 +94,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": ExtResource("11_ngtxa")
+}],
+"loop": true,
+"name": &"shift_block",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": ExtResource("11_vo2i2")
 }],
 "loop": true,
@@ -153,7 +162,7 @@ script = ExtResource("1_oc1kf")
 [node name="Moves" type="AnimatedSprite2D" parent="." unique_id=570971162]
 scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_v7tvf")
-animation = &"air_damaged"
+animation = &"shift_block"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2134461329]
 shape = SubResource("CapsuleShape2D_oc1kf")
