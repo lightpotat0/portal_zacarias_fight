@@ -17,7 +17,7 @@ rotation = -6.2831855
 
 [node name="Player1" type="HBoxContainer" parent="." unique_id=1091973859]
 layout_mode = 0
-offset_right = 381.972
+offset_right = 266.0
 offset_bottom = 70.0
 
 [node name="Bars" type="VBoxContainer" parent="Player1" unique_id=737570407]
