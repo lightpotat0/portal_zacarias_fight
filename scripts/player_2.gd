@@ -83,13 +83,13 @@ func _physics_process(delta):
 
 		if agachado:
 			_animated_sprite.scale = Vector2(1.0, 1.0)
-			_animated_sprite.offset = Vector2(0, 100) 
-			
+			_animated_sprite.offset = Vector2(0, 100)
+
 			if Input.is_action_pressed("triangulo"):
 				_animated_sprite.play("shift_kick")
-			if Input.is_action_pressed("o"):
+			elif Input.is_action_pressed("o"):
 				_animated_sprite.play("shift_block")
-			if Input.is_action_pressed("quadrado"):
+			elif Input.is_action_pressed("quadrado"):
 				_animated_sprite.play("shift_punch")
 			else:
 				_animated_sprite.play("shift")

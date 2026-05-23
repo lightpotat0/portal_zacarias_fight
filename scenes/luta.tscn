@@ -41,16 +41,3 @@ shape = SubResource("RectangleShape2D_ocv87")
 [node name="Camera2D" type="Camera2D" parent="." unique_id=102568668]
 position = Vector2(573, 321)
 script = ExtResource("4_70woq")
-
-[node name="wall_left" type="CollisionShape2D" parent="." unique_id=727209656]
-position = Vector2(-528.7314, -3.9897156)
-rotation = 1.5815187
-scale = Vector2(1.9123604, 1.912354)
-skew = 0.0020645857
-shape = SubResource("RectangleShape2D_ocv87")
-
-[node name="wall_right" type="CollisionShape2D" parent="." unique_id=1868107391]
-position = Vector2(1750.6985, -53.068153)
-rotation = -1.5695168
-scale = Vector2(1.9999994, -0.95617753)
-shape = SubResource("RectangleShape2D_ocv87")
