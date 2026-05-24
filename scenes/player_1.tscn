@@ -4,9 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://d0hb7vxm3t6vd" path="res://sprites/character/first player/block.png" id="1_a5yar"]
 [ext_resource type="Texture2D" uid="uid://dttldwhywkrxw" path="res://sprites/character/first player/stop.png" id="1_rfmnd"]
 [ext_resource type="Texture2D" uid="uid://dkte0edan86tc" path="res://sprites/character/first player/damage1.png" id="2_0xj1c"]
-[ext_resource type="Texture2D" uid="uid://td17iar6bg76" path="res://sprites/character/first player/walk1.png" id="2_f7tsm"]
 [ext_resource type="Texture2D" uid="uid://cr6te6m6p27uo" path="res://sprites/character/first player/damage2.png" id="3_5jn4c"]
-[ext_resource type="Texture2D" uid="uid://pnyuf50hscxh" path="res://sprites/character/first player/walk2.png" id="3_vod78"]
 [ext_resource type="Texture2D" uid="uid://gsa62cktjjgl" path="res://sprites/character/first player/die.png" id="4_vdha1"]
 [ext_resource type="Texture2D" uid="uid://bsy7g4m4j88mb" path="res://sprites/character/first player/jump.png" id="5_djvvh"]
 [ext_resource type="Texture2D" uid="uid://cce1seekbohb5" path="res://sprites/character/first player/jump_kick.png" id="6_gv8e3"]
@@ -19,6 +17,9 @@
 [ext_resource type="Texture2D" uid="uid://ccsf5686yxmkn" path="res://sprites/character/first player/shift_block.png" id="13_cst6g"]
 [ext_resource type="Texture2D" uid="uid://b826ci1ek2nqy" path="res://sprites/character/first player/shift_kick.png" id="14_chjti"]
 [ext_resource type="Texture2D" uid="uid://6p6ekdbkfc5d" path="res://sprites/character/first player/shift_punch.png" id="15_ept87"]
+[ext_resource type="Texture2D" uid="uid://duxmw3l00b36v" path="res://sprites/character/first player/walk3.png" id="20_djvvh"]
+[ext_resource type="Texture2D" uid="uid://cqi1hyhaqn54k" path="res://sprites/character/first player/walk4.png" id="21_gv8e3"]
+[ext_resource type="Texture2D" uid="uid://bithrj5dtuqrk" path="res://sprites/character/first player/walk5.png" id="22_tci7f"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_gneq0"]
 animations = [{
@@ -132,10 +133,13 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("2_f7tsm")
+"texture": ExtResource("20_djvvh")
 }, {
 "duration": 1.0,
-"texture": ExtResource("3_vod78")
+"texture": ExtResource("21_gv8e3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22_tci7f")
 }],
 "loop": true,
 "name": &"walk",
@@ -151,7 +155,7 @@ script = ExtResource("1_0xj1c")
 
 [node name="Moves" type="AnimatedSprite2D" parent="." unique_id=41085168]
 sprite_frames = SubResource("SpriteFrames_gneq0")
-animation = &"jump"
+animation = &"walk"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1647681855]
 shape = SubResource("CapsuleShape2D_f7tsm")
