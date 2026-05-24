@@ -3,29 +3,34 @@ extends CharacterBody2D
 @onready var _animated_sprite = $Moves
 @onready var collision = $CollisionShape2D
 @export var player_1: CharacterBody2D
-@onready var barra_vida: TextureProgressBar = $Player1/Bars/Bar/TextureProgressBar
+@onready var barra_vida: TextureProgressBar = $Player2/Bars/Bar/TextureProgressBar
 
 const SPEED = 250.0
 const JUMP_VELOCITY = -1300.0
 const GRAVITY_SCALE = 3
 const FALL_GRAVITY_SCALE = 5.0
-
-const DISTANCIA_CORPO_A_CORPO = 150.0 
-const DISTANCIA_AFASTADO = 400.0       
+const DISTANCIA_CORPO_A_CORPO = 150.0
+const DISTANCIA_AFASTADO = 400.0
 
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 var agachado = false
 var atacando = false
-var bloqueando = false 
+var bloqueando = false
 var animacao_ataque = ""
 
 var tempo_decisao = 0.0
-var intervalo_decisao = 0.15 
+var intervalo_decisao = 0.15
 var vida_maxima = 100.0
 var vida_atual = 100.0
 var morto = false
 var em_knockback = false
 var tempo_knockback = 0.0
+
+var tempo_ataque = 0.0
+var duracao_ataque = 0.4
+var tempo_dano = 0.0
+var intervalo_dano = 0.4 
+var tamanho_colisao_original = Vector2.ZERO
 
 func _ready():
 	vida_atual = vida_maxima
@@ -35,18 +40,20 @@ func _ready():
 			if node is CharacterBody2D and node != self:
 				player_1 = node
 				break
-	
 	ajustar_colisao_ao_sprite()
+	if collision.shape is RectangleShape2D:
+		tamanho_colisao_original = collision.shape.size
 
 func _physics_process(delta):
 	if morto:
+		_animated_sprite.play("die")
 		if not is_on_floor():
 			velocity.y += gravity * FALL_GRAVITY_SCALE * delta
 		else:
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 		move_and_slide()
 		return
-		
+
 	if em_knockback:
 		tempo_knockback -= delta
 		if tempo_knockback <= 0:
@@ -57,8 +64,16 @@ func _physics_process(delta):
 			velocity.x = move_toward(velocity.x, 0, SPEED * 0.5)
 		move_and_slide()
 		processar_animacoes()
+		verificar_dano_causado()
 		return
-		
+
+	# Conta o tempo do ataque atual
+	if atacando:
+		tempo_ataque -= delta
+		if tempo_ataque <= 0:
+			atacando = false
+			animacao_ataque = ""
+
 	if not is_on_floor():
 		if velocity.y < 0:
 			velocity.y += gravity * GRAVITY_SCALE * delta
@@ -73,8 +88,30 @@ func _physics_process(delta):
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 
+	# Ajusta colisão conforme estado
+	ajustar_colisao_estado()
+
 	move_and_slide()
 	processar_animacoes()
+
+func ajustar_colisao_estado():
+	if not collision.shape is RectangleShape2D:
+		return
+	var largura = tamanho_colisao_original.x
+	var altura = tamanho_colisao_original.y
+
+	if agachado:
+		# Colisão baixa — não acerta ataques normais em pé
+		collision.shape.size = Vector2(largura, altura * 0.5)
+		collision.position = Vector2(0, altura * 0.25)
+	elif not is_on_floor():
+		# No ar — colisão um pouco menor
+		collision.shape.size = Vector2(largura * 0.8, altura * 0.85)
+		collision.position = Vector2(0, 0)
+	else:
+		# Em pé normal
+		collision.shape.size = tamanho_colisao_original
+		collision.position = Vector2(0, 0)
 
 func processar_logica_ia():
 	var direcao_para_p1 = player_1.global_position.x - global_position.x
@@ -85,9 +122,8 @@ func processar_logica_ia():
 		_animated_sprite.flip_h = direcao_normalizada > 0
 
 	var acoes_possiveis = ["soco", "chute", "bloqueio", "agachar_soco", "agachar_chute", "pular", "aproximar"]
-	
 	var melhor_acao = ""
-	var melhor_score = -999999.0 
+	var melhor_score = -999999.0
 
 	var p1_atacando = player_1.get("atacando") if "atacando" in player_1 else false
 	var p1_bloqueando = player_1.get("bloqueando") if "bloqueando" in player_1 else false
@@ -96,9 +132,7 @@ func processar_logica_ia():
 
 	for acao in acoes_possiveis:
 		var score_atual = avaliar_utilidade_minimax(acao, distancia_absoluta, p1_atacando, p1_bloqueando, p1_agachado, p1_no_ar)
-		
 		score_atual += randf_range(-5.0, 5.0)
-
 		if score_atual > melhor_score:
 			melhor_score = score_atual
 			melhor_acao = acao
@@ -111,28 +145,22 @@ func avaliar_utilidade_minimax(acao_ia, distancia, p1_ataca, p1_bloqueia, p1_aga
 		if distancia > DISTANCIA_CORPO_A_CORPO:
 			score -= 50.0
 		else:
-			score += 40.0 
-			if p1_ataca:
-				score -= 20.0 
-			if p1_bloqueia:
-				score -= 30.0
-			if p1_agacha and acao_ia == "soco":
-				score -= 40.0 
+			score += 40.0
+			if p1_ataca: score -= 20.0
+			if p1_bloqueia: score -= 30.0
+			if p1_agacha and acao_ia == "soco": score -= 40.0
 
 	elif acao_ia == "bloqueio":
 		if p1_ataca and distancia <= DISTANCIA_CORPO_A_CORPO:
-			score += 100.0 
+			score += 100.0
 		elif distancia > DISTANCIA_CORPO_A_CORPO:
-			score -= 20.0 
+			score -= 20.0
 
 	elif acao_ia == "agachar_soco" or acao_ia == "agachar_chute":
 		if distancia <= DISTANCIA_CORPO_A_CORPO:
-			if p1_no_ar:
-				score += 90.0 
-			elif p1_bloqueia:
-				score += 50.0 
-			else:
-				score += 30.0
+			if p1_no_ar: score += 90.0
+			elif p1_bloqueia: score += 50.0
+			else: score += 30.0
 		else:
 			score -= 50.0
 
@@ -140,39 +168,43 @@ func avaliar_utilidade_minimax(acao_ia, distancia, p1_ataca, p1_bloqueia, p1_aga
 		if p1_agacha and distancia <= DISTANCIA_CORPO_A_CORPO:
 			score += 60.0
 		elif distancia > DISTANCIA_CORPO_A_CORPO and randf() < 0.2:
-			score += 20.0 
+			score += 20.0
 		else:
 			score -= 10.0
 
 	elif acao_ia == "aproximar":
 		if distancia > DISTANCIA_CORPO_A_CORPO:
-			score += 80.0 
+			score += 80.0
 		else:
-			score -= 70.0 
+			score -= 70.0
 
 	return score
 
 func executar_acao_escolhida(acao, direcao_normalizada, distancia):
+	# Não interrompe um ataque em andamento
+	if atacando:
+		return
+
 	agachado = false
-	if is_on_floor():
-		atacando = false
-		bloqueando = false
+	bloqueando = false
 
 	if not is_on_floor():
 		if acao in ["soco", "agachar_soco"]:
 			_animated_sprite.play("jump_punch")
 		elif acao in ["chute", "agachar_chute"]:
-			_animated_sprite.play("jump kick")
+			_animated_sprite.play("jump_kick")
 		return
 
 	match acao:
 		"soco":
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 			atacando = true
+			tempo_ataque = duracao_ataque
 			animacao_ataque = "punch"
 		"chute":
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 			atacando = true
+			tempo_ataque = duracao_ataque
 			animacao_ataque = "kick"
 		"bloqueio":
 			velocity.x = move_toward(velocity.x, 0, SPEED)
@@ -181,10 +213,14 @@ func executar_acao_escolhida(acao, direcao_normalizada, distancia):
 		"agachar_soco":
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 			agachado = true
+			atacando = true
+			tempo_ataque = duracao_ataque
 			animacao_ataque = "shift_punch"
 		"agachar_chute":
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 			agachado = true
+			atacando = true
+			tempo_ataque = duracao_ataque
 			animacao_ataque = "shift_kick"
 		"pular":
 			if is_on_floor():
@@ -198,7 +234,7 @@ func processar_animacoes():
 		if _animated_sprite.animation == "jump_punch":
 			_animated_sprite.scale = Vector2(1.6, 1.6)
 			_animated_sprite.offset = Vector2(0, -15)
-		elif _animated_sprite.animation == "jump kick":
+		elif _animated_sprite.animation == "jump_kick":
 			_animated_sprite.scale = Vector2(0.8, 0.8)
 			_animated_sprite.offset = Vector2(0, -15)
 		else:
@@ -223,7 +259,6 @@ func processar_animacoes():
 func ajustar_colisao_ao_sprite():
 	var anim_atual = _animated_sprite.animation
 	var frame_atual = _animated_sprite.frame
-	
 	if _animated_sprite.sprite_frames.has_animation(anim_atual):
 		var textura_frame = _animated_sprite.sprite_frames.get_frame_texture(anim_atual, frame_atual)
 		if textura_frame:
@@ -231,12 +266,11 @@ func ajustar_colisao_ao_sprite():
 			tamanho_sprite *= _animated_sprite.scale
 			if collision.shape is RectangleShape2D:
 				collision.shape.size = tamanho_sprite
-				
+
 func receber_dano(quantidade: float, direcao_dano: float):
 	if morto:
 		_animated_sprite.play("die")
 		return
-		
 	if bloqueando:
 		vida_atual -= quantidade * 0.1
 		atualizar_barra_vida()
@@ -245,22 +279,51 @@ func receber_dano(quantidade: float, direcao_dano: float):
 		return
 	vida_atual -= quantidade
 	atualizar_barra_vida()
-	
 	if vida_atual <= 0:
 		morrer()
 	else:
-		_animated_sprite.play("stop")
+		_animated_sprite.play("damaged") if _animated_sprite.sprite_frames.has_animation("damaged") else _animated_sprite.play("stop")
 		em_knockback = true
-		tempo_knockback = 0.25 
-	
+		tempo_knockback = 0.25
 		velocity.x = direcao_dano * 400.0
 		if is_on_floor():
-			velocity.y = -300.0 
+			velocity.y = -300.0
+			
+func verificar_dano_causado():
+	if not player_1 or not is_instance_valid(player_1):
+		return
+	tempo_dano -= get_physics_process_delta_time()
+	if tempo_dano > 0:
+		return
 
+	var anim_atual = _animated_sprite.animation
+	var distancia = abs(player_1.global_position.x - global_position.x)
+	var direcao_dano = sign(player_1.global_position.x - global_position.x)
+	var dano = 0.0
+
+	match anim_atual:
+		"punch":       dano = 10.0
+		"kick":        dano = 15.0
+		"shift_punch": dano = 8.0
+		"shift_kick":  dano = 12.0
+		"jump_punch":  dano = 13.0
+		"jump_kick":   dano = 18.0
+
+	if dano > 0 and distancia <= DISTANCIA_CORPO_A_CORPO:
+		player_1.receber_dano(dano, direcao_dano)
+		tempo_dano = intervalo_dano 
+		
 func morrer():
 	morto = true
 	velocity = Vector2.ZERO
-	collision.set_deferred("disabled", true)
+	call_deferred("_aplicar_colisao_morto")
+
+func _aplicar_colisao_morto():
+	if collision.shape is RectangleShape2D:
+		var largura = tamanho_colisao_original.x
+		var altura = tamanho_colisao_original.y
+		collision.shape.size = Vector2(largura, altura * 0.25)
+		collision.position = Vector2(0, altura * 0.37)
 
 func atualizar_barra_vida():
 	if barra_vida:

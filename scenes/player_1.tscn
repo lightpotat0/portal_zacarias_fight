@@ -154,16 +154,18 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_f7tsm"]
-radius = 61.0
-height = 338.0
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_5jn4c"]
+radius = 62.999996
+height = 322.66666
 
-[node name="CharacterBody2D" type="CharacterBody2D" unique_id=1872654527]
+[node name="Player1" type="CharacterBody2D" unique_id=1872654527]
+scale = Vector2(1.5, 1.5)
 script = ExtResource("1_0xj1c")
 
 [node name="Moves" type="AnimatedSprite2D" parent="." unique_id=41085168]
 sprite_frames = SubResource("SpriteFrames_gneq0")
-animation = &"die"
+animation = &"stop"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1647681855]
-shape = SubResource("CapsuleShape2D_f7tsm")
+position = Vector2(-4.9999976, 6.6666665)
+shape = SubResource("CapsuleShape2D_5jn4c")
