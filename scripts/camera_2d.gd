@@ -1,6 +1,6 @@
 extends Camera2D
 
-@onready var target = get_node("../Player2")
+@onready var target = get_node("../Player1")
 @export var smooth_speed: float = 5.0
 
 func _ready() -> void:

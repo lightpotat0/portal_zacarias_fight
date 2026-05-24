@@ -30,10 +30,10 @@ grow_horizontal = 1
 grow_vertical = 1
 
 [node name="Player2" parent="." unique_id=454800802 instance=ExtResource("3_ipou6")]
-position = Vector2(1010, 356)
+position = Vector2(1091, 438)
 
 [node name="Player1" parent="." unique_id=1872654527 instance=ExtResource("4_ocv87")]
-position = Vector2(742, 375)
+position = Vector2(52, 456)
 
 [node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=815171004]
 
