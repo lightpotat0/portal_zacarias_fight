@@ -47,6 +47,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": ExtResource("4_vdha1")
+}],
+"loop": true,
+"name": &"die",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": ExtResource("5_djvvh")
 }],
 "loop": true,
@@ -155,7 +163,7 @@ script = ExtResource("1_0xj1c")
 
 [node name="Moves" type="AnimatedSprite2D" parent="." unique_id=41085168]
 sprite_frames = SubResource("SpriteFrames_gneq0")
-animation = &"walk"
+animation = &"die"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1647681855]
 shape = SubResource("CapsuleShape2D_f7tsm")

@@ -3,6 +3,7 @@ extends CharacterBody2D
 @onready var _animated_sprite = $Moves
 @onready var collision = $CollisionShape2D
 @export var player_1: CharacterBody2D
+@onready var barra_vida: TextureProgressBar = $Player1/Bars/Bar/TextureProgressBar
 
 const SPEED = 250.0
 const JUMP_VELOCITY = -1300.0
@@ -19,9 +20,16 @@ var bloqueando = false
 var animacao_ataque = ""
 
 var tempo_decisao = 0.0
-var intervalo_decisao = 0.15 # Intervalo ligeiramente menor para simulações mais precisas
+var intervalo_decisao = 0.15 
+var vida_maxima = 100.0
+var vida_atual = 100.0
+var morto = false
+var em_knockback = false
+var tempo_knockback = 0.0
 
 func _ready():
+	vida_atual = vida_maxima
+	atualizar_barra_vida()
 	if not player_1:
 		for node in get_parent().get_children():
 			if node is CharacterBody2D and node != self:
@@ -31,6 +39,26 @@ func _ready():
 	ajustar_colisao_ao_sprite()
 
 func _physics_process(delta):
+	if morto:
+		if not is_on_floor():
+			velocity.y += gravity * FALL_GRAVITY_SCALE * delta
+		else:
+			velocity.x = move_toward(velocity.x, 0, SPEED)
+		move_and_slide()
+		return
+		
+	if em_knockback:
+		tempo_knockback -= delta
+		if tempo_knockback <= 0:
+			em_knockback = false
+		if not is_on_floor():
+			velocity.y += gravity * FALL_GRAVITY_SCALE * delta
+		else:
+			velocity.x = move_toward(velocity.x, 0, SPEED * 0.5)
+		move_and_slide()
+		processar_animacoes()
+		return
+		
 	if not is_on_floor():
 		if velocity.y < 0:
 			velocity.y += gravity * GRAVITY_SCALE * delta
@@ -56,98 +84,80 @@ func processar_logica_ia():
 	if direcao_normalizada != 0:
 		_animated_sprite.flip_h = direcao_normalizada > 0
 
-	# --- IMPLEMENTAÇÃO ADAPTADA DO MINIMAX ---
-	# Lista de ações possíveis que a IA pode tomar neste ciclo
 	var acoes_possiveis = ["soco", "chute", "bloqueio", "agachar_soco", "agachar_chute", "pular", "aproximar"]
 	
 	var melhor_acao = ""
-	var melhor_score = -999999.0 # Inicializa com o pior valor possível para maximizar
+	var melhor_score = -999999.0 
 
-	# Coleta os dados do estado atual do Player 1 (Oponente "Minimizador")
 	var p1_atacando = player_1.get("atacando") if "atacando" in player_1 else false
 	var p1_bloqueando = player_1.get("bloqueando") if "bloqueando" in player_1 else false
 	var p1_agachado = player_1.get("agachado") if "agachado" in player_1 else false
 	var p1_no_ar = not player_1.is_on_floor()
 
-	# Avalia cada ramificação da árvore de decisão de profundidade 1
 	for acao in acoes_possiveis:
-		# Calcula a pontuação com base na matriz de recompensa contra a ação do oponente
 		var score_atual = avaliar_utilidade_minimax(acao, distancia_absoluta, p1_atacando, p1_bloqueando, p1_agachado, p1_no_ar)
 		
-		# Adiciona uma leve variação aleatória para a IA não se tornar 100% previsível
 		score_atual += randf_range(-5.0, 5.0)
 
-		# ETAPA MAX: Escolhe a ação que gera o maior score positivo para a IA
 		if score_atual > melhor_score:
 			melhor_score = score_atual
 			melhor_acao = acao
 
-	# Executa a melhor ação encontrada pelo Minimax
 	executar_acao_escolhida(melhor_acao, direcao_normalizada, distancia_absoluta)
 
-# Matriz de Avaliação de Utilidade (Função Heurística do Minimax)
 func avaliar_utilidade_minimax(acao_ia, distancia, p1_ataca, p1_bloqueia, p1_agacha, p1_no_ar) -> float:
 	var score = 0.0
-
-	# Regras para quando a IA decide atacar ("soco" ou "chute")
 	if acao_ia == "soco" or acao_ia == "chute":
 		if distancia > DISTANCIA_CORPO_A_CORPO:
-			score -= 50.0 # Péssimo: Atacar o vento de longe deixa a IA vulnerável
+			score -= 50.0
 		else:
-			score += 40.0 # Bom: Está perto para acertar
+			score += 40.0 
 			if p1_ataca:
-				score -= 20.0 # Risco de contra-ataque mútuo
+				score -= 20.0 
 			if p1_bloqueia:
-				score -= 30.0 # Ruim: Oponente vai mitigar o dano
+				score -= 30.0
 			if p1_agacha and acao_ia == "soco":
-				score -= 40.0 # Ruim: Soco alto erra oponente agachado
+				score -= 40.0 
 
-	# Regras para quando a IA decide Bloquear
 	elif acao_ia == "bloqueio":
 		if p1_ataca and distancia <= DISTANCIA_CORPO_A_CORPO:
-			score += 100.0 # Excelente: Minimiza perfeitamente o ataque iminente do jogador
+			score += 100.0 
 		elif distancia > DISTANCIA_CORPO_A_CORPO:
-			score -= 20.0 # Inútil: Bloquear de longe sem perigo iminente
+			score -= 20.0 
 
-	# Regras para ataques agachados (Antiaéreos ou rasteiras)
 	elif acao_ia == "agachar_soco" or acao_ia == "agachar_chute":
 		if distancia <= DISTANCIA_CORPO_A_CORPO:
 			if p1_no_ar:
-				score += 90.0 # Excelente: Derruba o jogador saindo do ar (Anti-Air)
+				score += 90.0 
 			elif p1_bloqueia:
-				score += 50.0 # Bom: Chute rasteiro costuma quebrar defesas altas
+				score += 50.0 
 			else:
 				score += 30.0
 		else:
 			score -= 50.0
 
-	# Regras para Pular
 	elif acao_ia == "pular":
 		if p1_agacha and distancia <= DISTANCIA_CORPO_A_CORPO:
-			score += 60.0 # Bom: Pular evita ataques rasteiros
+			score += 60.0
 		elif distancia > DISTANCIA_CORPO_A_CORPO and randf() < 0.2:
-			score += 20.0 # Movimentação aérea casual
+			score += 20.0 
 		else:
 			score -= 10.0
 
-	# Regras para se aproximar do jogador
 	elif acao_ia == "aproximar":
 		if distancia > DISTANCIA_CORPO_A_CORPO:
-			score += 80.0 # Prioridade Máxima: Se está longe, precisa caçar o oponente
+			score += 80.0 
 		else:
-			score -= 70.0 # Péssimo: Continuar andando para frente colado no alvo gera penalidade
+			score -= 70.0 
 
 	return score
 
-# Aplica as variáveis físicas e de animação baseadas no resultado vencedor do algoritmo
 func executar_acao_escolhida(acao, direcao_normalizada, distancia):
-	# Reseta estados padrões de chão
 	agachado = false
 	if is_on_floor():
 		atacando = false
 		bloqueando = false
 
-	# Comportamento caso a IA já esteja executando um pulo
 	if not is_on_floor():
 		if acao in ["soco", "agachar_soco"]:
 			_animated_sprite.play("jump_punch")
@@ -155,7 +165,6 @@ func executar_acao_escolhida(acao, direcao_normalizada, distancia):
 			_animated_sprite.play("jump kick")
 		return
 
-	# Traduz a string do algoritmo em ações reais da máquina de física do jogo
 	match acao:
 		"soco":
 			velocity.x = move_toward(velocity.x, 0, SPEED)
@@ -222,3 +231,37 @@ func ajustar_colisao_ao_sprite():
 			tamanho_sprite *= _animated_sprite.scale
 			if collision.shape is RectangleShape2D:
 				collision.shape.size = tamanho_sprite
+				
+func receber_dano(quantidade: float, direcao_dano: float):
+	if morto:
+		_animated_sprite.play("die")
+		return
+		
+	if bloqueando:
+		vida_atual -= quantidade * 0.1
+		atualizar_barra_vida()
+		if vida_atual <= 0:
+			morrer()
+		return
+	vida_atual -= quantidade
+	atualizar_barra_vida()
+	
+	if vida_atual <= 0:
+		morrer()
+	else:
+		_animated_sprite.play("stop")
+		em_knockback = true
+		tempo_knockback = 0.25 
+	
+		velocity.x = direcao_dano * 400.0
+		if is_on_floor():
+			velocity.y = -300.0 
+
+func morrer():
+	morto = true
+	velocity = Vector2.ZERO
+	collision.set_deferred("disabled", true)
+
+func atualizar_barra_vida():
+	if barra_vida:
+		barra_vida.value = vida_atual
