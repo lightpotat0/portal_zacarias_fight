@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bw8436tjljtd0"
-path="res://.godot/imported/fight_pose5.png-66f01cf83f7248dd0f4b2441da9c707d.ctex"
+uid="uid://gsa62cktjjgl"
+path="res://.godot/imported/die.png-e5e8d749eb528061448773327a9146b8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/character/second player/fight_pose5.png"
-dest_files=["res://.godot/imported/fight_pose5.png-66f01cf83f7248dd0f4b2441da9c707d.ctex"]
+source_file="res://sprites/character/first player/die.png"
+dest_files=["res://.godot/imported/die.png-e5e8d749eb528061448773327a9146b8.ctex"]
 
 [params]
 

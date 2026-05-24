@@ -1,11 +1,9 @@
 [gd_scene format=3 uid="uid://dsclvyuci1etl"]
 
 [ext_resource type="Script" uid="uid://bpveao4vppjbf" path="res://scripts/player_2.gd" id="1_oc1kf"]
-[ext_resource type="Texture2D" uid="uid://dlhb42win6lfq" path="res://sprites/character/second player/fight_pose2.png" id="1_yjax8"]
 [ext_resource type="Texture2D" uid="uid://coegrywlp45a5" path="res://sprites/character/second player/stopped.png" id="2_0mr0g"]
 [ext_resource type="Texture2D" uid="uid://4n7isk5xni6v" path="res://sprites/character/second player/shield.png" id="2_60kbs"]
 [ext_resource type="Texture2D" uid="uid://c8de76j3jxhj1" path="res://sprites/character/second player/jump.png" id="2_v7tvf"]
-[ext_resource type="Texture2D" uid="uid://cy5ocvoipmq4f" path="res://sprites/character/second player/fight_pose3.png" id="3_0mr0g"]
 [ext_resource type="Texture2D" uid="uid://14uvxki17yei" path="res://sprites/character/second player/punch_1.png" id="3_t4bc4"]
 [ext_resource type="Texture2D" uid="uid://b7ni7lygbvki3" path="res://sprites/character/second player/jump_kick.png" id="4_ngtxa"]
 [ext_resource type="Texture2D" uid="uid://yj0nooc7kaq3" path="res://sprites/character/second player/punch_2.png" id="4_wtgcc"]
@@ -20,8 +18,9 @@
 [ext_resource type="Texture2D" uid="uid://clrlccbth6ljb" path="res://sprites/character/second player/shift_block.png" id="11_ngtxa"]
 [ext_resource type="Texture2D" uid="uid://c6kco23dou0ut" path="res://sprites/character/second player/shift_kick.png" id="11_vo2i2"]
 [ext_resource type="Texture2D" uid="uid://bb2k0i1ntot54" path="res://sprites/character/second player/shift_punch.png" id="13_mu5be"]
-[ext_resource type="Texture2D" uid="uid://dovh6x3d4ydfu" path="res://sprites/character/second player/fight_pose4.png" id="14_60kbs"]
-[ext_resource type="Texture2D" uid="uid://bw8436tjljtd0" path="res://sprites/character/second player/fight_pose5.png" id="15_3ooxp"]
+[ext_resource type="Texture2D" uid="uid://qkvee188cv51" path="res://sprites/character/second player/walk1.png" id="19_ngtxa"]
+[ext_resource type="Texture2D" uid="uid://beof71uv16ysd" path="res://sprites/character/second player/walk3.png" id="20_mu5be"]
+[ext_resource type="Texture2D" uid="uid://cgakatv510nq4" path="res://sprites/character/second player/walk2.png" id="21_bolrf"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_v7tvf"]
 resource_name = "walk"
@@ -144,16 +143,13 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("14_60kbs")
+"texture": ExtResource("19_ngtxa")
 }, {
 "duration": 1.0,
-"texture": ExtResource("15_3ooxp")
+"texture": ExtResource("20_mu5be")
 }, {
 "duration": 1.0,
-"texture": ExtResource("3_0mr0g")
-}, {
-"duration": 1.0,
-"texture": ExtResource("1_yjax8")
+"texture": ExtResource("21_bolrf")
 }],
 "loop": true,
 "name": &"walk",
@@ -171,7 +167,7 @@ script = ExtResource("1_oc1kf")
 [node name="Moves" type="AnimatedSprite2D" parent="." unique_id=570971162]
 scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_v7tvf")
-animation = &"stop"
+animation = &"shift_kick"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2134461329]
 shape = SubResource("CapsuleShape2D_oc1kf")
