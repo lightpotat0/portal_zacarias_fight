@@ -200,11 +200,12 @@ func morrer():
 	call_deferred("_aplicar_colisao_morto")
 
 func _aplicar_colisao_morto():
-	if collision.shape is RectangleShape2D:
-		var largura = tamanho_colisao_original.x
-		var altura = tamanho_colisao_original.y
-		collision.shape.size = Vector2(largura, altura * 0.25)
-		collision.position = Vector2(0, altura * 0.37)
+	if collision.shape is CapsuleShape2D:
+		var raio_original = tamanho_colisao_original.x 
+		var altura_original = tamanho_colisao_original.y 
+		collision.shape.radius = altura_original * 0.25  
+		collision.shape.height = altura_original * 0.8  
+		collision.position = Vector2(0, altura_original * 0.35)
 
 func ajustar_colisao_estado():
 	if not collision.shape is RectangleShape2D:

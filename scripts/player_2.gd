@@ -269,8 +269,21 @@ func processar_animacoes():
 		_animated_sprite.offset = Vector2(0, 0)
 
 		if agachado:
-			_animated_sprite.offset = Vector2(0, 100) 
-			_animated_sprite.play(animacao_ataque if animacao_ataque in ["shift_punch", "shift_kick", "shift_block"] else "shift")
+			var anim_alvo = animacao_ataque if animacao_ataque in ["shift_punch", "shift_kick", "shift_block"] else "shift"
+			_animated_sprite.play(anim_alvo)
+			match anim_alvo:
+				"shift_punch":
+					_animated_sprite.scale = Vector2(1.2, 1.2)   
+					_animated_sprite.offset = Vector2(0, 50)     
+				"shift_kick":
+					_animated_sprite.scale = Vector2(1.0, 1.0)  
+					_animated_sprite.offset = Vector2(0, 50)     
+				"shift_block": 
+					_animated_sprite.scale = Vector2(0.9, 0.9)   
+					_animated_sprite.offset = Vector2(0, 50)      
+				"shift":
+					_animated_sprite.scale = Vector2(1.1, 1.1)   
+					_animated_sprite.offset = Vector2(0, 50)  
 		elif atacando or bloqueando:
 			_animated_sprite.play(animacao_ataque)
 		elif abs(velocity.x) > 10:
@@ -346,13 +359,13 @@ func morrer():
 	call_deferred("_aplicar_colisao_morto")
 
 func _aplicar_colisao_morto():
-	if not collision.shape is RectangleShape2D:
+	if not collision.shape is CapsuleShape2D:
 		return
-	var largura = tamanho_colisao_original.x
-	var altura = tamanho_colisao_original.y
-	collision.rotation = PI / 2
-	collision.shape.size = Vector2(altura * 0.8, largura)
-	collision.position = Vector2(0, altura * 0.4)
+	var raio_original = tamanho_colisao_original.x 
+	var altura_original = tamanho_colisao_original.y 
+	collision.shape.radius = altura_original * 0.25  
+	collision.shape.height = altura_original * 0.8  
+	collision.position = Vector2(0, altura_original * 0.35)
 
 func atualizar_barra_vida():
 	if barra_vida:
