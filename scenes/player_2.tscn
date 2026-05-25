@@ -4,7 +4,10 @@
 [ext_resource type="Texture2D" uid="uid://coegrywlp45a5" path="res://sprites/character/second player/stopped.png" id="2_0mr0g"]
 [ext_resource type="Texture2D" uid="uid://4n7isk5xni6v" path="res://sprites/character/second player/shield.png" id="2_60kbs"]
 [ext_resource type="Texture2D" uid="uid://c8de76j3jxhj1" path="res://sprites/character/second player/jump.png" id="2_v7tvf"]
+[ext_resource type="Texture2D" uid="uid://dlbvx5f5p32b1" path="res://sprites/character/second player/fatality1.png" id="2_vxqa6"]
 [ext_resource type="Texture2D" uid="uid://14uvxki17yei" path="res://sprites/character/second player/punch_1.png" id="3_t4bc4"]
+[ext_resource type="Texture2D" uid="uid://cj1a08msty715" path="res://sprites/character/second player/fatality2.png" id="3_vo2i2"]
+[ext_resource type="Texture2D" uid="uid://chesulaomg4m3" path="res://sprites/character/second player/win.png" id="4_hsasb"]
 [ext_resource type="Texture2D" uid="uid://b7ni7lygbvki3" path="res://sprites/character/second player/jump_kick.png" id="4_ngtxa"]
 [ext_resource type="Texture2D" uid="uid://yj0nooc7kaq3" path="res://sprites/character/second player/punch_2.png" id="4_wtgcc"]
 [ext_resource type="Texture2D" uid="uid://5w3jpmwhdy1c" path="res://sprites/character/second player/shift.png" id="5_jbo5h"]
@@ -25,6 +28,20 @@
 [sub_resource type="SpriteFrames" id="SpriteFrames_v7tvf"]
 resource_name = "walk"
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_vxqa6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_vo2i2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_hsasb")
+}],
+"loop": true,
+"name": &"begin",
+"speed": 5.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("2_60kbs")
@@ -170,7 +187,7 @@ script = ExtResource("1_oc1kf")
 [node name="Moves" type="AnimatedSprite2D" parent="." unique_id=570971162]
 scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_v7tvf")
-animation = &"shock"
+animation = &"begin"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2134461329]
 shape = SubResource("CapsuleShape2D_oc1kf")

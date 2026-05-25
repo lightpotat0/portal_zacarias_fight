@@ -4,9 +4,11 @@
 [ext_resource type="Texture2D" uid="uid://d0hb7vxm3t6vd" path="res://sprites/character/first player/block.png" id="1_a5yar"]
 [ext_resource type="Texture2D" uid="uid://dttldwhywkrxw" path="res://sprites/character/first player/stop.png" id="1_rfmnd"]
 [ext_resource type="Texture2D" uid="uid://dkte0edan86tc" path="res://sprites/character/first player/damage1.png" id="2_0xj1c"]
+[ext_resource type="Texture2D" uid="uid://bewbwnhnecmct" path="res://sprites/character/first player/win2.png" id="2_djvvh"]
 [ext_resource type="Texture2D" uid="uid://cr6te6m6p27uo" path="res://sprites/character/first player/damage2.png" id="3_5jn4c"]
 [ext_resource type="Texture2D" uid="uid://gsa62cktjjgl" path="res://sprites/character/first player/die.png" id="4_vdha1"]
 [ext_resource type="Texture2D" uid="uid://bsy7g4m4j88mb" path="res://sprites/character/first player/jump.png" id="5_djvvh"]
+[ext_resource type="Texture2D" uid="uid://dbukvbvssf8bg" path="res://sprites/character/first player/win1.png" id="5_gv8e3"]
 [ext_resource type="Texture2D" uid="uid://cce1seekbohb5" path="res://sprites/character/first player/jump_kick.png" id="6_gv8e3"]
 [ext_resource type="Texture2D" uid="uid://bqu8wjyllc8hd" path="res://sprites/character/first player/jump_punch.png" id="7_tci7f"]
 [ext_resource type="Texture2D" uid="uid://dxkfe5fbrlgyl" path="res://sprites/character/first player/kick.png" id="8_m8x2t"]
@@ -23,6 +25,23 @@
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_gneq0"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_djvvh")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_hnfa5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_q1mos")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_gv8e3")
+}],
+"loop": true,
+"name": &"begin",
+"speed": 5.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("1_a5yar")
@@ -164,7 +183,7 @@ script = ExtResource("1_0xj1c")
 
 [node name="Moves" type="AnimatedSprite2D" parent="." unique_id=41085168]
 sprite_frames = SubResource("SpriteFrames_gneq0")
-animation = &"stop"
+animation = &"begin"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1647681855]
 position = Vector2(-4.9999976, 6.6666665)
