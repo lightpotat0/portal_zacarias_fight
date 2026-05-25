@@ -44,6 +44,7 @@ func _ready():
 func _physics_process(delta):
 	if morto:
 		_animated_sprite.play("die")
+		_animated_sprite.scale = Vector2(1.5, 1.5)
 		if not is_on_floor():
 			velocity.y += gravity * FALL_GRAVITY_SCALE * delta
 		else:
@@ -186,6 +187,7 @@ func receber_dano(quantidade: float, direcao_dano: float):
 		morrer()
 	else:
 		_animated_sprite.play("damaged")
+		_animated_sprite.scale = Vector2(1.5, 1.5)
 		em_knockback = true
 		tempo_knockback = 0.25
 		velocity.x = direcao_dano * 400.0
@@ -224,33 +226,35 @@ func processar_animacoes(direction: float):
 	if not is_on_floor():
 		if Input.is_action_pressed("quadrado"):
 			_animated_sprite.play("jump_punch")
-			_animated_sprite.scale = Vector2(1.0, 1.0)
+			_animated_sprite.scale = Vector2(1.3, 1.3)
 			_animated_sprite.offset = Vector2(0, -15)
 		elif Input.is_action_pressed("triangulo"):
 			_animated_sprite.play("jump_kick")
-			_animated_sprite.scale = Vector2(1.0, 1.0)
+			_animated_sprite.scale = Vector2(1.3, 1.3)
 			_animated_sprite.offset = Vector2(0, -15)
 		else:
 			_animated_sprite.play("jump")
-			_animated_sprite.scale = Vector2(1.3, 1.3)
+			_animated_sprite.scale = Vector2(1.5, 1.5)
 			_animated_sprite.offset = Vector2(0, -10)
 	else:
 		_animated_sprite.scale = Vector2(1.4, 1.4)
 		_animated_sprite.offset = Vector2(0, 0)
 
 		if agachado:
-			_animated_sprite.scale = Vector2(0.8, 0.8)
+			_animated_sprite.scale = Vector2(1.1, 1.1)
 			_animated_sprite.offset = Vector2(0, 100)
 			if Input.is_action_pressed("triangulo"):
 				_animated_sprite.play("shift_kick")
-				_animated_sprite.scale = Vector2(0.45, 0.45)
+				_animated_sprite.scale = Vector2(0.6, 0.6)
 				_animated_sprite.offset = Vector2(0, 250)
 			elif Input.is_action_pressed("o"):
 				_animated_sprite.play("shift_block")
-				_animated_sprite.scale = Vector2(0.5, 0.5)
+				_animated_sprite.scale = Vector2(0.6, 0.6)
+				_animated_sprite.offset = Vector2(0, 100)
 			elif Input.is_action_pressed("quadrado"):
 				_animated_sprite.play("shift_punch")
-				_animated_sprite.scale = Vector2(1.0, 1.0)
+				_animated_sprite.scale = Vector2(1.3, 1.3)
+				_animated_sprite.offset = Vector2(0, 50)
 			else:
 				_animated_sprite.play("shift")
 		elif em_knockback:

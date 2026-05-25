@@ -100,14 +100,28 @@ func ajustar_colisao_estado():
 		return
 	var largura = tamanho_colisao_original.x
 	var altura = tamanho_colisao_original.y
+	if not is_on_floor():
+		if _animated_sprite.animation == "jump_punch":
+			_animated_sprite.scale = Vector2(1.6, 1.6)
+			_animated_sprite.offset = Vector2(0, -15)
+		elif _animated_sprite.animation == "jump_kick":
+			_animated_sprite.scale = Vector2(0.8, 0.8)
+			_animated_sprite.offset = Vector2(0, -15)
+		else:
+			_animated_sprite.scale = Vector2(1.3, 1.3)
+			_animated_sprite.offset = Vector2(0, -10)
+		collision.shape.size = Vector2(largura * _animated_sprite.scale.x, altura * _animated_sprite.scale.y * 0.85)
+		collision.position = Vector2(0, 0)
 
-	if agachado:
+	elif agachado:
+		_animated_sprite.scale = Vector2(1.0, 1.0) 
+		_animated_sprite.offset = Vector2(0, 10)
 		collision.shape.size = Vector2(largura, altura * 0.5)
 		collision.position = Vector2(0, altura * 0.25)
-	elif not is_on_floor():
-		collision.shape.size = Vector2(largura * 0.8, altura * 0.85)
-		collision.position = Vector2(0, 0)
 	else:
+		_animated_sprite.scale = Vector2(1.0, 1.0)
+		_animated_sprite.offset = Vector2(0, 0)
+		
 		collision.shape.size = tamanho_colisao_original
 		collision.position = Vector2(0, 0)
 
@@ -227,7 +241,20 @@ func executar_acao_escolhida(acao, direcao_normalizada, distancia):
 			velocity.x = direcao_normalizada * SPEED
 
 func processar_animacoes():
+	if em_knockback:
+		if _animated_sprite.sprite_frames.has_animation("shock"):
+			_animated_sprite.play("shock")
+			_animated_sprite.scale = Vector2(1.0, 1.0)
+		else:
+			_animated_sprite.play("stop")
+		return
+		
 	if not is_on_floor():
+		if atacando and animacao_ataque != "":
+			_animated_sprite.play(animacao_ataque)
+		elif _animated_sprite.animation not in ["jump_punch", "jump_kick"]:
+			_animated_sprite.play("jump")
+
 		if _animated_sprite.animation == "jump_punch":
 			_animated_sprite.scale = Vector2(1.6, 1.6)
 			_animated_sprite.offset = Vector2(0, -15)
@@ -235,7 +262,6 @@ func processar_animacoes():
 			_animated_sprite.scale = Vector2(0.8, 0.8)
 			_animated_sprite.offset = Vector2(0, -15)
 		else:
-			_animated_sprite.play("jump")
 			_animated_sprite.scale = Vector2(1.3, 1.3)
 			_animated_sprite.offset = Vector2(0, -10)
 	else:
@@ -243,8 +269,7 @@ func processar_animacoes():
 		_animated_sprite.offset = Vector2(0, 0)
 
 		if agachado:
-			_animated_sprite.scale = Vector2(1.0, 1.0)
-			_animated_sprite.offset = Vector2(0, 100)
+			_animated_sprite.offset = Vector2(0, 100) 
 			_animated_sprite.play(animacao_ataque if animacao_ataque in ["shift_punch", "shift_kick", "shift_block"] else "shift")
 		elif atacando or bloqueando:
 			_animated_sprite.play(animacao_ataque)
@@ -258,15 +283,16 @@ func ajustar_colisao_ao_sprite():
 	var frame_atual = _animated_sprite.frame
 	if _animated_sprite.sprite_frames.has_animation(anim_atual):
 		var textura_frame = _animated_sprite.sprite_frames.get_frame_texture(anim_atual, frame_atual)
-		if textura_frame:
+		if textura_frame and collision.shape is RectangleShape2D:
+			if not collision.shape.resource_local_to_scene:
+				collision.shape = collision.shape.duplicate()
 			var tamanho_sprite = textura_frame.get_size()
-			tamanho_sprite *= _animated_sprite.scale
-			if collision.shape is RectangleShape2D:
-				collision.shape.size = tamanho_sprite
+			collision.shape.size = tamanho_sprite * _animated_sprite.scale
 
 func receber_dano(quantidade: float, direcao_dano: float):
 	if morto:
-		_animated_sprite.play("die")
+		_animated_sprite.play("die") 
+		_animated_sprite.scale = Vector2(1.0, 1.0)
 		return
 	if bloqueando:
 		vida_atual -= quantidade * 0.1
