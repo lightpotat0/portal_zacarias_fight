@@ -46,11 +46,14 @@ func _ready():
 
 func _physics_process(delta):
 	if morto:
-		_animated_sprite.play("die")
 		if not is_on_floor():
 			velocity.y += gravity * FALL_GRAVITY_SCALE * delta
+			velocity.x = move_toward(velocity.x, 0, SPEED * 0.3)
 		else:
 			velocity.x = move_toward(velocity.x, 0, SPEED)
+			velocity.y = 0
+			_animated_sprite.offset = Vector2(0, altura_sprite())
+		_animated_sprite.play("die")
 		move_and_slide()
 		return
 
@@ -313,15 +316,23 @@ func verificar_dano_causado(delta):
 func morrer():
 	morto = true
 	velocity = Vector2.ZERO
+	collision.rotation = 0
 	call_deferred("_aplicar_colisao_morto")
 
 func _aplicar_colisao_morto():
-	if collision.shape is RectangleShape2D:
-		var largura = tamanho_colisao_original.x
-		var altura = tamanho_colisao_original.y
-		collision.shape.size = Vector2(largura, altura * 0.25)
-		collision.position = Vector2(0, altura * 0.37)
+	if not collision.shape is RectangleShape2D:
+		return
+	var largura = tamanho_colisao_original.x
+	var altura = tamanho_colisao_original.y
+	collision.rotation = PI / 2
+	collision.shape.size = Vector2(altura * 0.8, largura)
+	collision.position = Vector2(0, altura * 0.4)
 
 func atualizar_barra_vida():
 	if barra_vida:
 		barra_vida.value = vida_atual
+
+func altura_sprite() -> float:
+	if tamanho_colisao_original != Vector2.ZERO:
+		return tamanho_colisao_original.y * 0.3
+	return 30.0
