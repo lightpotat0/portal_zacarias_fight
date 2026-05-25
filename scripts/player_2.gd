@@ -64,10 +64,9 @@ func _physics_process(delta):
 			velocity.x = move_toward(velocity.x, 0, SPEED * 0.5)
 		move_and_slide()
 		processar_animacoes()
-		verificar_dano_causado()
+		verificar_dano_causado(delta)
 		return
 
-	# Conta o tempo do ataque atual
 	if atacando:
 		tempo_ataque -= delta
 		if tempo_ataque <= 0:
@@ -88,11 +87,10 @@ func _physics_process(delta):
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 
-	# Ajusta colisão conforme estado
 	ajustar_colisao_estado()
-
 	move_and_slide()
 	processar_animacoes()
+	verificar_dano_causado(delta)
 
 func ajustar_colisao_estado():
 	if not collision.shape is RectangleShape2D:
@@ -101,15 +99,12 @@ func ajustar_colisao_estado():
 	var altura = tamanho_colisao_original.y
 
 	if agachado:
-		# Colisão baixa — não acerta ataques normais em pé
 		collision.shape.size = Vector2(largura, altura * 0.5)
 		collision.position = Vector2(0, altura * 0.25)
 	elif not is_on_floor():
-		# No ar — colisão um pouco menor
 		collision.shape.size = Vector2(largura * 0.8, altura * 0.85)
 		collision.position = Vector2(0, 0)
 	else:
-		# Em pé normal
 		collision.shape.size = tamanho_colisao_original
 		collision.position = Vector2(0, 0)
 
@@ -181,7 +176,6 @@ func avaliar_utilidade_minimax(acao_ia, distancia, p1_ataca, p1_bloqueia, p1_aga
 	return score
 
 func executar_acao_escolhida(acao, direcao_normalizada, distancia):
-	# Não interrompe um ataque em andamento
 	if atacando:
 		return
 
@@ -282,17 +276,20 @@ func receber_dano(quantidade: float, direcao_dano: float):
 	if vida_atual <= 0:
 		morrer()
 	else:
-		_animated_sprite.play("damaged") if _animated_sprite.sprite_frames.has_animation("damaged") else _animated_sprite.play("stop")
+		if _animated_sprite.sprite_frames.has_animation("shock"):
+			_animated_sprite.play("shock")
+		else:
+			_animated_sprite.play("stop")
 		em_knockback = true
 		tempo_knockback = 0.25
 		velocity.x = direcao_dano * 400.0
 		if is_on_floor():
 			velocity.y = -300.0
 			
-func verificar_dano_causado():
+func verificar_dano_causado(delta):
 	if not player_1 or not is_instance_valid(player_1):
 		return
-	tempo_dano -= get_physics_process_delta_time()
+	tempo_dano -= delta  
 	if tempo_dano > 0:
 		return
 
@@ -311,7 +308,7 @@ func verificar_dano_causado():
 
 	if dano > 0 and distancia <= DISTANCIA_CORPO_A_CORPO:
 		player_1.receber_dano(dano, direcao_dano)
-		tempo_dano = intervalo_dano 
+		tempo_dano = intervalo_dano
 		
 func morrer():
 	morto = true

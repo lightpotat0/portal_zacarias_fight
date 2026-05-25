@@ -2,7 +2,7 @@ extends CharacterBody2D
 
 @onready var _animated_sprite = $Moves
 @onready var collision = $CollisionShape2D
-@onready var barra_vida: TextureProgressBar = $Bars/Bar/TextureProgressBar # CORRIJA o caminho conforme sua cena
+@onready var barra_vida: TextureProgressBar = $Bars/Bar/TextureProgressBar 
 
 @export var player_2: CharacterBody2D
 
@@ -25,6 +25,9 @@ var tempo_knockback = 0.0
 var invencivel = false
 var tempo_invencibilidade = 0.0
 var tamanho_colisao_original = Vector2.ZERO
+var tempo_dano = 0.0
+var intervalo_dano = 0.4
+var tempo_dano_causado = 0.0
 
 func _ready():
 	vida_atual = vida_maxima
@@ -106,18 +109,19 @@ func _physics_process(delta):
 		velocity.x = direction * SPEED
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
-	ajustar_colisao_estado()
 	move_and_slide()
-	verificar_dano_recebido()
+	verificar_dano_recebido(delta)  
+	verificar_dano_causado(delta)  
 	processar_animacoes(direction)
 
-func verificar_dano_recebido():
+func verificar_dano_recebido(delta):
+	tempo_dano -= delta
 	if morto or not player_2 or not is_instance_valid(player_2) or invencivel:
+		return
+	if tempo_dano > 0:
 		return
 
 	var distancia = abs(player_2.global_position.x - global_position.x)
-	var direcao_dano = sign(global_position.x - player_2.global_position.x)
-
 	if distancia > ALCANCE_ATAQUE:
 		return
 
@@ -125,10 +129,8 @@ func verificar_dano_recebido():
 	if not anim_sprite_p2:
 		return
 
-	var anim_atual = anim_sprite_p2.animation
 	var dano = 0.0
-
-	match anim_atual:
+	match anim_sprite_p2.animation:
 		"punch":       dano = 10.0
 		"kick":        dano = 15.0
 		"shift_punch": dano = 8.0
@@ -137,7 +139,35 @@ func verificar_dano_recebido():
 		"jump_kick":   dano = 18.0
 
 	if dano > 0:
-		receber_dano(dano, direcao_dano)
+		receber_dano(dano, sign(global_position.x - player_2.global_position.x))
+		tempo_dano = intervalo_dano
+		
+
+func verificar_dano_causado(delta):
+	tempo_dano_causado -= delta
+	if not player_2 or not is_instance_valid(player_2):
+		return
+	if tempo_dano_causado > 0:
+		return
+
+	var distancia = abs(player_2.global_position.x - global_position.x)
+	if distancia > ALCANCE_ATAQUE:
+		return
+
+	var dano = 0.0
+	var direcao = sign(player_2.global_position.x - global_position.x)
+
+	match _animated_sprite.animation:
+		"punch":       dano = 10.0
+		"kick":        dano = 15.0
+		"shift_punch": dano = 8.0
+		"shift_kick":  dano = 12.0
+		"jump_punch":  dano = 13.0
+		"jump_kick":   dano = 18.0
+
+	if dano > 0:
+		player_2.receber_dano(dano, direcao)
+		tempo_dano_causado = intervalo_dano
 
 func receber_dano(quantidade: float, direcao_dano: float):
 	if morto or invencivel:  

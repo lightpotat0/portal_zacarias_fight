@@ -25,17 +25,20 @@
 [sub_resource type="SpriteFrames" id="SpriteFrames_v7tvf"]
 resource_name = "walk"
 animations = [{
-"frames": [],
-"loop": true,
-"name": &"air_damaged",
-"speed": 5.0
-}, {
 "frames": [{
 "duration": 1.0,
 "texture": ExtResource("2_60kbs")
 }],
 "loop": true,
 "name": &"block",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("9_wtgcc")
+}],
+"loop": true,
+"name": &"die",
 "speed": 5.0
 }, {
 "frames": [{
@@ -167,7 +170,7 @@ script = ExtResource("1_oc1kf")
 [node name="Moves" type="AnimatedSprite2D" parent="." unique_id=570971162]
 scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_v7tvf")
-animation = &"stop"
+animation = &"die"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2134461329]
 shape = SubResource("CapsuleShape2D_oc1kf")

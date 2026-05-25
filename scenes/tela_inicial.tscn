@@ -1,8 +1,7 @@
 [gd_scene format=3 uid="uid://dx3uolvbqwodv"]
 
-[ext_resource type="Texture2D" uid="uid://bwpibe26tae4i" path="res://sprites/menu/menu_bg.jpg" id="1_2o6u0"]
-[ext_resource type="Texture2D" uid="uid://cgl32p2i5u7ob" path="res://sprites/menu/start_button.png" id="2_hvj2l"]
-[ext_resource type="Texture2D" uid="uid://dkyqxqbloo5mt" path="res://sprites/menu/logo.png" id="3_mxryr"]
+[ext_resource type="Texture2D" uid="uid://drcyb6atoxkwj" path="res://sprites/menu/menu_bg.png" id="1_hvj2l"]
+[ext_resource type="Texture2D" uid="uid://pv44qmg57tkr" path="res://sprites/menu/start.png" id="2_2o6u0"]
 [ext_resource type="Script" uid="uid://dru334cvy07c" path="res://scripts/start_button.gd" id="4_hvj2l"]
 
 [node name="initial_screen" type="Control" unique_id=1914449291]
@@ -14,9 +13,9 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="MenuBg" type="Sprite2D" parent="." unique_id=9369549]
-position = Vector2(592.5, 397.74997)
-scale = Vector2(0.92578125, 0.93376315)
-texture = ExtResource("1_2o6u0")
+position = Vector2(579.00006, 325)
+scale = Vector2(0.9075516, 0.9876148)
+texture = ExtResource("1_hvj2l")
 
 [node name="ContainTitle" type="HBoxContainer" parent="." unique_id=796318975]
 layout_mode = 0
@@ -31,18 +30,14 @@ mouse_force_pass_scroll_events = false
 mouse_default_cursor_shape = 2
 alignment = 1
 
-[node name="Logo" type="Sprite2D" parent="ContainTitle/PortalZacarias" unique_id=754476391]
-position = Vector2(808, 246.00003)
-scale = Vector2(2.046417, 2.0551949)
-texture = ExtResource("3_mxryr")
-
 [node name="Start" type="MenuButton" parent="." unique_id=1736448171]
 layout_mode = 0
-offset_left = 4.0
-offset_top = 389.0
-offset_right = 524.0
-offset_bottom = 650.0
+offset_left = 95.0
+offset_top = 432.0
+offset_right = 1042.0
+offset_bottom = 705.0
+scale = Vector2(0.5, 0.5)
 mouse_default_cursor_shape = 2
-icon = ExtResource("2_hvj2l")
+icon = ExtResource("2_2o6u0")
 vertical_icon_alignment = 2
 script = ExtResource("4_hvj2l")
