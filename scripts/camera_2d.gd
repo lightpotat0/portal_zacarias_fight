@@ -58,8 +58,8 @@ func bloquear_jogadores(bloquear: bool) -> void:
 			var sprite_p2 = player_2.get_node("Moves")
 			if bloquear:
 				sprite_p2.play("begin")
-				sprite_p2.speed_scale = 0.5  
+				sprite_p2.speed_scale = 0.2
 				sprite_p2.scale = Vector2(0.8, 0.8)   
 				sprite_p2.offset = Vector2(0, 0)      
 			else:
-				sprite_p2.speed_scale = 1.0 
+				sprite_p2.speed_scale = 1.0

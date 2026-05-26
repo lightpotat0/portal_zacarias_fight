@@ -7,8 +7,8 @@
 [ext_resource type="Texture2D" uid="uid://dlbvx5f5p32b1" path="res://sprites/character/second player/fatality1.png" id="2_vxqa6"]
 [ext_resource type="Texture2D" uid="uid://14uvxki17yei" path="res://sprites/character/second player/punch_1.png" id="3_t4bc4"]
 [ext_resource type="Texture2D" uid="uid://cj1a08msty715" path="res://sprites/character/second player/fatality2.png" id="3_vo2i2"]
-[ext_resource type="Texture2D" uid="uid://chesulaomg4m3" path="res://sprites/character/second player/win.png" id="4_hsasb"]
 [ext_resource type="Texture2D" uid="uid://b7ni7lygbvki3" path="res://sprites/character/second player/jump_kick.png" id="4_ngtxa"]
+[ext_resource type="Texture2D" uid="uid://b7fcyd82urmcg" path="res://sprites/character/second player/fatality3.png" id="4_vxqa6"]
 [ext_resource type="Texture2D" uid="uid://yj0nooc7kaq3" path="res://sprites/character/second player/punch_2.png" id="4_wtgcc"]
 [ext_resource type="Texture2D" uid="uid://5w3jpmwhdy1c" path="res://sprites/character/second player/shift.png" id="5_jbo5h"]
 [ext_resource type="Texture2D" uid="uid://c83765too52gf" path="res://sprites/character/second player/jump_punch.png" id="5_mu5be"]
@@ -36,7 +36,7 @@ animations = [{
 "texture": ExtResource("3_vo2i2")
 }, {
 "duration": 1.0,
-"texture": ExtResource("4_hsasb")
+"texture": ExtResource("4_vxqa6")
 }],
 "loop": true,
 "name": &"begin",

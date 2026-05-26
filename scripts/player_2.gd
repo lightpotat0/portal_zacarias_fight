@@ -172,6 +172,7 @@ func avaliar_utilidade_minimax(acao_ia, distancia, p1_ataca, p1_bloqueia, p1_aga
 		if distancia <= DISTANCIA_CORPO_A_CORPO:
 			if p1_no_ar: score += 90.0
 			elif p1_bloqueia: score += 50.0
+
 			else: score += 30.0
 		else:
 			score -= 50.0
