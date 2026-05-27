@@ -31,6 +31,7 @@ var duracao_ataque = 0.4
 var tempo_dano = 0.0
 var intervalo_dano = 0.4 
 var tamanho_colisao_original = Vector2.ZERO
+var tipo_ataque_atual: String = "medio" 
 
 func _ready():
 	vida_atual = vida_maxima
@@ -54,6 +55,9 @@ func _physics_process(delta):
 			velocity.y = 0
 			_animated_sprite.offset = Vector2(0, altura_sprite())
 		_animated_sprite.play("die")
+		
+		# Garante que aplica a colisão de morto quando o estado mudar
+		_aplicar_colisao_morto()
 		move_and_slide()
 		return
 
@@ -95,11 +99,17 @@ func _physics_process(delta):
 	processar_animacoes()
 	verificar_dano_causado(delta)
 
+
 func ajustar_colisao_estado():
-	if not collision.shape is RectangleShape2D:
+	if collision and collision.shape:
+		collision.shape = collision.shape.duplicate()
+		
+	if not collision.shape is CapsuleShape2D:
 		return
-	var largura = tamanho_colisao_original.x
-	var altura = tamanho_colisao_original.y
+		
+	var raio_original = tamanho_colisao_original.x
+	var altura_original = tamanho_colisao_original.y
+
 	if not is_on_floor():
 		if _animated_sprite.animation == "jump_punch":
 			_animated_sprite.scale = Vector2(1.6, 1.6)
@@ -110,19 +120,24 @@ func ajustar_colisao_estado():
 		else:
 			_animated_sprite.scale = Vector2(1.3, 1.3)
 			_animated_sprite.offset = Vector2(0, -10)
-		collision.shape.size = Vector2(largura * _animated_sprite.scale.x, altura * _animated_sprite.scale.y * 0.85)
-		collision.position = Vector2(0, 0)
+		
+		var nova_altura = altura_original * _animated_sprite.scale.y * 0.85
+		collision.shape.height = nova_altura
+		collision.shape.radius = raio_original * _animated_sprite.scale.x * 0.8
+		collision.position = Vector2(0, (altura_original - nova_altura) * 0.5)
 
 	elif agachado:
 		_animated_sprite.scale = Vector2(1.0, 1.0) 
 		_animated_sprite.offset = Vector2(0, 10)
-		collision.shape.size = Vector2(largura, altura * 0.5)
-		collision.position = Vector2(0, altura * 0.25)
+		var nova_altura = altura_original * 0.5
+		collision.shape.height = nova_altura
+		collision.shape.radius = min(raio_original, nova_altura * 0.5)
+		collision.position = Vector2(0, (altura_original - nova_altura) * 0.5)
 	else:
 		_animated_sprite.scale = Vector2(1.0, 1.0)
 		_animated_sprite.offset = Vector2(0, 0)
-		
-		collision.shape.size = tamanho_colisao_original
+		collision.shape.height = altura_original
+		collision.shape.radius = raio_original
 		collision.position = Vector2(0, 0)
 
 func processar_logica_ia():
