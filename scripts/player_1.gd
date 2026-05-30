@@ -25,17 +25,20 @@ var tempo_knockback = 0.0
 var invencivel = false
 var tempo_invencibilidade = 0.0
 var tamanho_colisao_original = Vector2.ZERO
-var tempo_dano = 0.0
 var intervalo_dano = 0.4
 var tempo_dano_causado = 0.0
-var tipo_ataque_atual: String = "medio"
+var tipo_ataque_atual: String = "alto"
+
+# Direção travada no momento em que o bloqueio foi iniciado
+# true = olhando para esquerda, false = olhando para direita, null = sem bloqueio ativo
+var bloqueio_direcao_travada = null
 
 func _ready():
 	vida_atual = vida_maxima
 	atualizar_barra_vida()
-	ajustar_colisao_ao_sprite() 
+	ajustar_colisao_ao_sprite()
 	if collision.shape is RectangleShape2D:
-		tamanho_colisao_original = collision.shape.size  
+		tamanho_colisao_original = collision.shape.size
 	if not player_2:
 		for node in get_parent().get_children():
 			if node is CharacterBody2D and node != self:
@@ -80,26 +83,38 @@ func _physics_process(delta):
 		agachado = false
 		atacando = false
 		bloqueando = false
+		bloqueio_direcao_travada = null
+
 	if Input.is_action_pressed("baixo") and is_on_floor():
 		agachado = true
 	else:
 		agachado = false
+
 	if is_on_floor() and not agachado:
 		if Input.is_action_pressed("quadrado"):
 			atacando = true
 			bloqueando = false
+			bloqueio_direcao_travada = null  # soltou o bloqueio
 			animacao_ataque = "punch"
+			tipo_ataque_atual = "alto"
 		elif Input.is_action_pressed("triangulo"):
 			atacando = true
 			bloqueando = false
+			bloqueio_direcao_travada = null  # soltou o bloqueio
 			animacao_ataque = "kick"
+			tipo_ataque_atual = "baixo"
 		elif Input.is_action_pressed("o"):
 			atacando = false
+			# Só trava a direção no primeiro frame que aperta o bloqueio
+			if not bloqueando:
+				bloqueio_direcao_travada = _animated_sprite.flip_h
 			bloqueando = true
 			animacao_ataque = "block"
 		else:
 			atacando = false
 			bloqueando = false
+			bloqueio_direcao_travada = null  # resetar ao soltar
+
 	var direction := Input.get_axis("left", "right")
 	if direction != 0:
 		_animated_sprite.flip_h = direction < 0
@@ -111,39 +126,8 @@ func _physics_process(delta):
 
 	ajustar_colisao_estado()
 	move_and_slide()
-	verificar_dano_recebido(delta)  
-	verificar_dano_causado(delta)  
+	verificar_dano_causado(delta)
 	processar_animacoes(direction)
-
-func verificar_dano_recebido(delta):
-	# Se não estiver defendendo, toma dano normalmente de qualquer golpe
-	if not bloqueando:
-		aplicar_dano_recebido()
-		return
-
-	# 1. VERIFICAÇÃO DIRECONAL (Defesa Esquerda vs Direita)
-	# Descobre de qual lado o atacante está em relação a este personagem
-	# (Substitua 'atacante' pela sua variável que referencia quem te bateu)
-	var atacante = obter_origem_do_ataque() 
-	if atacante:
-		var atacante_na_esquerda: bool = atacante.global_position.x < global_position.x
-		var olhando_para_esquerda: bool = _animated_sprite.flip_h
-
-		if (atacante_na_esquerda and olhando_para_esquerda) or (not atacante_na_esquerda and not olhando_para_esquerda):
-			aplicar_dano_recebido()
-			return
-	var tipo_golpe_inimigo = atacante.tipo_ataque_atual if atacante else "medio"
-
-	if agachado:
-		if tipo_golpe_inimigo == "alto":
-			aplicar_dano_recebido()
-			return
-	else:
-		if tipo_golpe_inimigo == "baixo":
-			aplicar_dano_recebido()
-			return
-	bloqueio_com_sucesso()
-
 
 func verificar_dano_causado(delta):
 	tempo_dano_causado -= delta
@@ -157,29 +141,66 @@ func verificar_dano_causado(delta):
 		return
 
 	var dano = 0.0
+	var tipo_golpe = "alto"
 	var direcao = sign(player_2.global_position.x - global_position.x)
 
 	match _animated_sprite.animation:
-		"punch":       dano = 10.0
-		"kick":        dano = 15.0
-		"shift_punch": dano = 8.0
-		"shift_kick":  dano = 12.0
-		"jump_punch":  dano = 13.0
-		"jump_kick":   dano = 18.0
+		"punch":
+			dano = 10.0
+			tipo_golpe = "alto"
+		"kick":
+			dano = 15.0
+			tipo_golpe = "baixo"
+		"shift_punch":
+			dano = 8.0
+			tipo_golpe = "baixo"
+		"shift_kick":
+			dano = 12.0
+			tipo_golpe = "baixo"
+		"jump_punch":
+			dano = 13.0
+			tipo_golpe = "alto"
+		"jump_kick":
+			dano = 18.0
+			tipo_golpe = "alto"
 
 	if dano > 0:
-		player_2.receber_dano(dano, direcao)
+		player_2.receber_dano(dano, direcao, tipo_golpe)
 		tempo_dano_causado = intervalo_dano
 
-func receber_dano(quantidade: float, direcao_dano: float):
-	if morto or invencivel:  
+func receber_dano(quantidade: float, direcao_dano: float, tipo_golpe: String = "alto"):
+	if morto or invencivel:
 		return
 
-	if bloqueando:
-		vida_atual -= quantidade * 0.1
-	else:
-		vida_atual -= quantidade
+	if bloqueando and bloqueio_direcao_travada != null:
+		var atacante_vem_da_esquerda: bool = direcao_dano > 0
 
+		# Direção que estava olhando quando o bloqueio foi iniciado (travada)
+		var bloqueio_olha_esquerda: bool = bloqueio_direcao_travada
+
+		# Costas expostas: atacante vem do lado oposto ao que o escudo cobre
+		# Ex: bloqueio olha direita (flip_h = false), mas atacante vem da direita também
+		# → atacante está nas costas → dano total
+		var atacante_nas_costas: bool = (
+			(atacante_vem_da_esquerda and not bloqueio_olha_esquerda) or
+			(not atacante_vem_da_esquerda and bloqueio_olha_esquerda)
+		)
+
+		if atacante_nas_costas:
+			# Costas completamente abertas: dano total, sem redução
+			pass
+		else:
+			# Frente coberta: verifica altura
+			# Em pé bloqueia alto, agachado bloqueia baixo
+			if not agachado and tipo_golpe == "alto":
+				bloqueio_com_sucesso()
+				return
+			elif agachado and tipo_golpe == "baixo":
+				bloqueio_com_sucesso()
+				return
+			# Altura errada: bloqueio não cobre, cai no dano normal
+
+	vida_atual -= quantidade
 	atualizar_barra_vida()
 	invencivel = true
 	tempo_invencibilidade = 0.4
@@ -195,6 +216,10 @@ func receber_dano(quantidade: float, direcao_dano: float):
 		if is_on_floor():
 			velocity.y = -300.0
 
+func bloqueio_com_sucesso():
+	# Feedback visual/sonoro do bloqueio pode ser adicionado aqui
+	pass
+
 func morrer():
 	morto = true
 	velocity = Vector2.ZERO
@@ -202,27 +227,24 @@ func morrer():
 
 func _aplicar_colisao_morto():
 	if collision.shape is CapsuleShape2D:
-		var raio_original = tamanho_colisao_original.x 
-		var altura_original = tamanho_colisao_original.y 
-		collision.shape.radius = altura_original * 0.25  
-		collision.shape.height = altura_original * 0.8  
+		var altura_original = tamanho_colisao_original.y
+		collision.shape.radius = altura_original * 0.25
+		collision.shape.height = altura_original * 0.8
 		collision.position = Vector2(0, altura_original * 0.35)
 
 func ajustar_colisao_estado():
 	if collision and collision.shape:
 		collision.shape = collision.shape.duplicate()
-		
 	if not collision.shape is CapsuleShape2D:
 		return
-	var raio_original = tamanho_colisao_original.x  
-	var altura_original = tamanho_colisao_original.y 
+	var raio_original = tamanho_colisao_original.x
+	var altura_original = tamanho_colisao_original.y
 
 	if agachado:
 		var nova_altura = altura_original * 0.5
 		collision.shape.height = nova_altura
 		collision.shape.radius = min(raio_original, nova_altura * 0.5)
 		collision.position = Vector2(0, (altura_original - nova_altura) * 0.5)
-		
 	elif not is_on_floor():
 		var nova_altura = altura_original * 0.85
 		collision.shape.height = nova_altura
@@ -269,7 +291,7 @@ func processar_animacoes(direction: float):
 			else:
 				_animated_sprite.play("shift")
 		elif em_knockback:
-			pass 
+			pass
 		elif atacando:
 			_animated_sprite.play(animacao_ataque)
 		elif bloqueando:
