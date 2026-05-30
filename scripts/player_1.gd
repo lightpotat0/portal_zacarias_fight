@@ -28,9 +28,6 @@ var tamanho_colisao_original = Vector2.ZERO
 var intervalo_dano = 0.4
 var tempo_dano_causado = 0.0
 var tipo_ataque_atual: String = "alto"
-
-# Direção travada no momento em que o bloqueio foi iniciado
-# true = olhando para esquerda, false = olhando para direita, null = sem bloqueio ativo
 var bloqueio_direcao_travada = null
 
 func _ready():
@@ -94,18 +91,17 @@ func _physics_process(delta):
 		if Input.is_action_pressed("quadrado"):
 			atacando = true
 			bloqueando = false
-			bloqueio_direcao_travada = null  # soltou o bloqueio
+			bloqueio_direcao_travada = null 
 			animacao_ataque = "punch"
 			tipo_ataque_atual = "alto"
 		elif Input.is_action_pressed("triangulo"):
 			atacando = true
 			bloqueando = false
-			bloqueio_direcao_travada = null  # soltou o bloqueio
+			bloqueio_direcao_travada = null  
 			animacao_ataque = "kick"
 			tipo_ataque_atual = "baixo"
 		elif Input.is_action_pressed("o"):
 			atacando = false
-			# Só trava a direção no primeiro frame que aperta o bloqueio
 			if not bloqueando:
 				bloqueio_direcao_travada = _animated_sprite.flip_h
 			bloqueando = true
@@ -113,7 +109,7 @@ func _physics_process(delta):
 		else:
 			atacando = false
 			bloqueando = false
-			bloqueio_direcao_travada = null  # resetar ao soltar
+			bloqueio_direcao_travada = null  
 
 	var direction := Input.get_axis("left", "right")
 	if direction != 0:
@@ -123,7 +119,6 @@ func _physics_process(delta):
 		velocity.x = direction * SPEED
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
-
 	ajustar_colisao_estado()
 	move_and_slide()
 	verificar_dano_causado(delta)
@@ -174,31 +169,20 @@ func receber_dano(quantidade: float, direcao_dano: float, tipo_golpe: String = "
 
 	if bloqueando and bloqueio_direcao_travada != null:
 		var atacante_vem_da_esquerda: bool = direcao_dano > 0
-
-		# Direção que estava olhando quando o bloqueio foi iniciado (travada)
 		var bloqueio_olha_esquerda: bool = bloqueio_direcao_travada
-
-		# Costas expostas: atacante vem do lado oposto ao que o escudo cobre
-		# Ex: bloqueio olha direita (flip_h = false), mas atacante vem da direita também
-		# → atacante está nas costas → dano total
 		var atacante_nas_costas: bool = (
 			(atacante_vem_da_esquerda and not bloqueio_olha_esquerda) or
 			(not atacante_vem_da_esquerda and bloqueio_olha_esquerda)
 		)
-
 		if atacante_nas_costas:
-			# Costas completamente abertas: dano total, sem redução
 			pass
 		else:
-			# Frente coberta: verifica altura
-			# Em pé bloqueia alto, agachado bloqueia baixo
 			if not agachado and tipo_golpe == "alto":
 				bloqueio_com_sucesso()
 				return
 			elif agachado and tipo_golpe == "baixo":
 				bloqueio_com_sucesso()
 				return
-			# Altura errada: bloqueio não cobre, cai no dano normal
 
 	vida_atual -= quantidade
 	atualizar_barra_vida()
@@ -217,7 +201,6 @@ func receber_dano(quantidade: float, direcao_dano: float, tipo_golpe: String = "
 			velocity.y = -300.0
 
 func bloqueio_com_sucesso():
-	# Feedback visual/sonoro do bloqueio pode ser adicionado aqui
 	pass
 
 func morrer():
