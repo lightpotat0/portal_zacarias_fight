@@ -39,7 +39,7 @@ scale = Vector2(0.8, 0.8)
 [node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=815171004]
 
 [node name="Floor" type="CollisionShape2D" parent="StaticBody2D" unique_id=1742733883]
-position = Vector2(582, 527)
+position = Vector2(563, 657)
 scale = Vector2(2, 2)
 shape = SubResource("RectangleShape2D_ocv87")
 

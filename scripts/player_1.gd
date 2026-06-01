@@ -160,7 +160,7 @@ func verificar_dano_causado(delta):
 			tipo_golpe = "alto"
 
 	if dano > 0:
-		player_2.receber_dano(dano, direcao, tipo_golpe)
+		player_2.receber_dano(dano, direcao) 
 		tempo_dano_causado = intervalo_dano
 
 func receber_dano(quantidade: float, direcao_dano: float, tipo_golpe: String = "alto"):
