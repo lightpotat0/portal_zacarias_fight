@@ -33,9 +33,8 @@ var bloqueio_direcao_travada = null
 func _ready():
 	vida_atual = vida_maxima
 	atualizar_barra_vida()
-	ajustar_colisao_ao_sprite()
-	if collision.shape is RectangleShape2D:
-		tamanho_colisao_original = collision.shape.size
+	if collision and collision.shape is CapsuleShape2D:
+		tamanho_colisao_original = Vector2(collision.shape.radius, collision.shape.height)
 	if not player_2:
 		for node in get_parent().get_children():
 			if node is CharacterBody2D and node != self:
@@ -229,7 +228,7 @@ func ajustar_colisao_estado():
 		collision.shape.radius = min(raio_original, nova_altura * 0.5)
 		collision.position = Vector2(0, (altura_original - nova_altura) * 0.5)
 	elif not is_on_floor():
-		var nova_altura = altura_original * 0.85
+		var nova_altura = altura_original * 0
 		collision.shape.height = nova_altura
 		collision.shape.radius = raio_original * 0.8
 		collision.position = Vector2(0, (altura_original - nova_altura) * 0.5)
@@ -284,17 +283,6 @@ func processar_animacoes(direction: float):
 			_animated_sprite.scale = Vector2(2.8, 2.8)
 		else:
 			_animated_sprite.play("stop")
-
-func ajustar_colisao_ao_sprite():
-	var anim_atual = _animated_sprite.animation
-	var frame_atual = _animated_sprite.frame
-	var textura_frame = _animated_sprite.sprite_frames.get_frame_texture(anim_atual, frame_atual)
-	if textura_frame:
-		var tamanho_sprite = textura_frame.get_size()
-		tamanho_sprite *= _animated_sprite.scale
-		if collision.shape is CapsuleShape2D:
-			collision.shape.height = tamanho_sprite.y
-			collision.shape.radius = tamanho_sprite.x * 0.5
 
 func atualizar_barra_vida():
 	if barra_vida:
