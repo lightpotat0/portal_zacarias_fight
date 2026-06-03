@@ -33,6 +33,9 @@ var intervalo_dano = 0.4
 var tamanho_colisao_original = Vector2.ZERO
 var tipo_ataque_atual: String = "medio" 
 
+var invencivel = false
+var tempo_invencibilidade = 0.0
+
 func _ready():
 	vida_atual = vida_maxima
 	atualizar_barra_vida()
@@ -41,30 +44,34 @@ func _ready():
 			if node is CharacterBody2D and node != self:
 				player_1 = node
 				break
-	ajustar_colisao_ao_sprite()
-	if collision.shape is RectangleShape2D:
-		tamanho_colisao_original = collision.shape.size
+	if collision and collision.shape is CapsuleShape2D:
+		tamanho_colisao_original = Vector2(collision.shape.radius, collision.shape.height)
+
 
 func _physics_process(delta):
 	if morto:
+		_animated_sprite.play("die")
+		_animated_sprite.scale = Vector2(1.0, 1.0)
+		_animated_sprite.modulate = Color.WHITE 
 		if not is_on_floor():
 			velocity.y += gravity * FALL_GRAVITY_SCALE * delta
 			velocity.x = move_toward(velocity.x, 0, SPEED * 0.3)
 		else:
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 			velocity.y = 0
-			_animated_sprite.offset = Vector2(0, altura_sprite())
-		_animated_sprite.play("die")
-		
-		# Garante que aplica a colisão de morto quando o estado mudar
 		_aplicar_colisao_morto()
 		move_and_slide()
 		return
-
+	if invencivel:
+		tempo_invencibilidade -= delta
+		if tempo_invencibilidade <= 0:
+			invencivel = false
+			_animated_sprite.modulate = Color.WHITE  
 	if em_knockback:
 		tempo_knockback -= delta
 		if tempo_knockback <= 0:
 			em_knockback = false
+			_animated_sprite.modulate = Color.WHITE  
 		if not is_on_floor():
 			velocity.y += gravity * FALL_GRAVITY_SCALE * delta
 		else:
@@ -94,48 +101,28 @@ func _physics_process(delta):
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 
-	ajustar_colisao_estado()
 	move_and_slide()
+	ajustar_colisao_estado()
 	processar_animacoes()
 	verificar_dano_causado(delta)
-
-
+	
 func ajustar_colisao_estado():
 	if collision and collision.shape:
 		collision.shape = collision.shape.duplicate()
-		
 	if not collision.shape is CapsuleShape2D:
 		return
-		
 	var raio_original = tamanho_colisao_original.x
 	var altura_original = tamanho_colisao_original.y
-
-	if not is_on_floor():
-		if _animated_sprite.animation == "jump_punch":
-			_animated_sprite.scale = Vector2(1.6, 1.6)
-			_animated_sprite.offset = Vector2(0, -15)
-		elif _animated_sprite.animation == "jump_kick":
-			_animated_sprite.scale = Vector2(0.8, 0.8)
-			_animated_sprite.offset = Vector2(0, -15)
-		else:
-			_animated_sprite.scale = Vector2(1.3, 1.3)
-			_animated_sprite.offset = Vector2(0, -10)
-		
-		var nova_altura = altura_original * _animated_sprite.scale.y * 0.85
-		collision.shape.height = nova_altura
-		collision.shape.radius = raio_original * _animated_sprite.scale.x * 0.8
-		collision.position = Vector2(0, (altura_original - nova_altura) * 0.5)
-
-	elif agachado:
-		_animated_sprite.scale = Vector2(1.0, 1.0) 
-		_animated_sprite.offset = Vector2(0, 10)
+	if agachado:
 		var nova_altura = altura_original * 0.5
 		collision.shape.height = nova_altura
 		collision.shape.radius = min(raio_original, nova_altura * 0.5)
 		collision.position = Vector2(0, (altura_original - nova_altura) * 0.5)
+	elif not is_on_floor():
+		collision.shape.height = altura_original * 0.8
+		collision.shape.radius = raio_original * 0.8
+		collision.position = Vector2(0, (altura_original - altura_original * 0.8) * 0.5)
 	else:
-		_animated_sprite.scale = Vector2(1.0, 1.0)
-		_animated_sprite.offset = Vector2(0, 0)
 		collision.shape.height = altura_original
 		collision.shape.radius = raio_original
 		collision.position = Vector2(0, 0)
@@ -307,30 +294,23 @@ func processar_animacoes():
 		else:
 			_animated_sprite.play("stop")
 
-func ajustar_colisao_ao_sprite():
-	var anim_atual = _animated_sprite.animation
-	var frame_atual = _animated_sprite.frame
-	if _animated_sprite.sprite_frames.has_animation(anim_atual):
-		var textura_frame = _animated_sprite.sprite_frames.get_frame_texture(anim_atual, frame_atual)
-		if textura_frame and collision.shape is RectangleShape2D:
-			if not collision.shape.resource_local_to_scene:
-				collision.shape = collision.shape.duplicate()
-			var tamanho_sprite = textura_frame.get_size()
-			collision.shape.size = tamanho_sprite * _animated_sprite.scale
-
-func receber_dano(quantidade: float, direcao_dano: float):
-	if morto:
-		_animated_sprite.play("die") 
-		_animated_sprite.scale = Vector2(1.0, 1.0)
+func receber_dano(quantidade: float, direcao_dano: float, tipo_golpe: String = "alto"):
+	if morto or invencivel:
 		return
+		
 	if bloqueando:
-		vida_atual -= quantidade * 0.1
-		atualizar_barra_vida()
-		if vida_atual <= 0:
-			morrer()
-		return
+		if (not agachado and tipo_golpe == "alto") or (agachado and tipo_golpe == "baixo"):
+			vida_atual -= quantidade * 0.1
+			atualizar_barra_vida()
+			if vida_atual <= 0:
+				morrer()
+			return
 	vida_atual -= quantidade
 	atualizar_barra_vida()
+	_animated_sprite.modulate = Color(1, 0.2, 0.2, 1)
+	invencivel = true
+	tempo_invencibilidade = 0.4
+	
 	if vida_atual <= 0:
 		morrer()
 	else:
@@ -355,17 +335,30 @@ func verificar_dano_causado(delta):
 	var distancia = abs(player_1.global_position.x - global_position.x)
 	var direcao_dano = sign(player_1.global_position.x - global_position.x)
 	var dano = 0.0
+	var tipo_golpe = "alto"
 
 	match anim_atual:
-		"punch":       dano = 10.0
-		"kick":        dano = 15.0
-		"shift_punch": dano = 8.0
-		"shift_kick":  dano = 12.0
-		"jump_punch":  dano = 13.0
-		"jump_kick":   dano = 18.0
+		"punch":
+			dano = 10.0
+			tipo_golpe = "alto"
+		"kick":
+			dano = 15.0
+			tipo_golpe = "baixo"
+		"shift_punch":
+			dano = 8.0
+			tipo_golpe = "baixo"
+		"shift_kick":
+			dano = 12.0
+			tipo_golpe = "baixo"
+		"jump_punch":
+			dano = 13.0
+			tipo_golpe = "alto"
+		"jump_kick":
+			dano = 18.0
+			tipo_golpe = "alto"
 
 	if dano > 0 and distancia <= DISTANCIA_CORPO_A_CORPO:
-		player_1.receber_dano(dano, direcao_dano)
+		player_1.receber_dano(dano, direcao_dano, tipo_golpe)
 		tempo_dano = intervalo_dano
 		
 func morrer():
@@ -377,10 +370,10 @@ func morrer():
 func _aplicar_colisao_morto():
 	if not collision.shape is CapsuleShape2D:
 		return
-	var raio_original = tamanho_colisao_original.x 
-	var altura_original = tamanho_colisao_original.y 
-	collision.shape.radius = altura_original * 0.25  
-	collision.shape.height = altura_original * 0.8  
+	var raio_original = tamanho_colisao_original.x
+	var altura_original = tamanho_colisao_original.y
+	collision.shape.radius = altura_original * 0.25
+	collision.shape.height = altura_original * 0.8
 	collision.position = Vector2(0, altura_original * 0.35)
 
 func atualizar_barra_vida():

@@ -33,7 +33,7 @@ grow_vertical = 1
 position = Vector2(1091, 438)
 
 [node name="Player1" parent="." unique_id=1872654527 instance=ExtResource("4_ocv87")]
-position = Vector2(126, 414)
+position = Vector2(126, 422)
 scale = Vector2(0.8, 0.8)
 
 [node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=815171004]

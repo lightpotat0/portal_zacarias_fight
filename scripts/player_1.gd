@@ -45,6 +45,7 @@ func _physics_process(delta):
 	if morto:
 		_animated_sprite.play("die")
 		_animated_sprite.scale = Vector2(1.5, 1.5)
+		_animated_sprite.modulate = Color.WHITE
 		if not is_on_floor():
 			velocity.y += gravity * FALL_GRAVITY_SCALE * delta
 		else:
@@ -56,6 +57,7 @@ func _physics_process(delta):
 		tempo_knockback -= delta
 		if tempo_knockback <= 0:
 			em_knockback = false
+			_animated_sprite.modulate = Color.WHITE
 		if not is_on_floor():
 			velocity.y += gravity * FALL_GRAVITY_SCALE * delta
 		else:
@@ -67,6 +69,7 @@ func _physics_process(delta):
 		tempo_invencibilidade -= delta
 		if tempo_invencibilidade <= 0:
 			invencivel = false
+			_animated_sprite.modulate = Color.WHITE
 
 	if not is_on_floor():
 		if velocity.y < 0:
@@ -159,7 +162,7 @@ func verificar_dano_causado(delta):
 			tipo_golpe = "alto"
 
 	if dano > 0:
-		player_2.receber_dano(dano, direcao) 
+		player_2.receber_dano(dano, direcao, tipo_golpe) 
 		tempo_dano_causado = intervalo_dano
 
 func receber_dano(quantidade: float, direcao_dano: float, tipo_golpe: String = "alto"):
@@ -187,6 +190,8 @@ func receber_dano(quantidade: float, direcao_dano: float, tipo_golpe: String = "
 	atualizar_barra_vida()
 	invencivel = true
 	tempo_invencibilidade = 0.4
+	
+	_animated_sprite.modulate = Color(1, 0.2, 0.2, 1)
 
 	if vida_atual <= 0:
 		morrer()
@@ -228,10 +233,9 @@ func ajustar_colisao_estado():
 		collision.shape.radius = min(raio_original, nova_altura * 0.5)
 		collision.position = Vector2(0, (altura_original - nova_altura) * 0.5)
 	elif not is_on_floor():
-		var nova_altura = altura_original * 0
-		collision.shape.height = nova_altura
+		collision.shape.height = altura_original * 0.8
 		collision.shape.radius = raio_original * 0.8
-		collision.position = Vector2(0, (altura_original - nova_altura) * 0.5)
+		collision.position = Vector2(0, (altura_original - altura_original * 0.8) * 0.5)
 	else:
 		collision.shape.height = altura_original
 		collision.shape.radius = raio_original
