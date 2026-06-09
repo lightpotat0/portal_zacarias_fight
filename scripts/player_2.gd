@@ -29,12 +29,43 @@ var tempo_knockback = 0.0
 var tempo_ataque = 0.0
 var duracao_ataque = 0.4
 var tempo_dano = 0.0
-var intervalo_dano = 0.4 
+var intervalo_dano = 0.4
 var tamanho_colisao_original = Vector2.ZERO
-var tipo_ataque_atual: String = "medio" 
+var tipo_ataque_atual: String = "medio"
 
 var invencivel = false
 var tempo_invencibilidade = 0.0
+
+# ─────────────────────────────────────────────
+#  ESTRUTURA DE ESTADO PARA O MINIMAX
+# ─────────────────────────────────────────────
+# Representa um snapshot leve do mundo para simulação.
+# Não usa nós reais — só dados puros, então é rápido.
+class EstadoJogo:
+	var vida_ia: float
+	var vida_p1: float
+	var distancia: float
+	var ia_atacando: bool
+	var ia_bloqueando: bool
+	var ia_agachado: bool
+	var ia_no_ar: bool
+	var p1_atacando: bool
+	var p1_bloqueando: bool
+	var p1_agachado: bool
+	var p1_no_ar: bool
+
+	func _init(v_ia, v_p1, dist, atk_ia, blk_ia, agch_ia, ar_ia, atk_p1, blk_p1, agch_p1, ar_p1):
+		vida_ia     = v_ia
+		vida_p1     = v_p1
+		distancia   = dist
+		ia_atacando = atk_ia
+		ia_bloqueando = blk_ia
+		ia_agachado = agch_ia
+		ia_no_ar    = ar_ia
+		p1_atacando = atk_p1
+		p1_bloqueando = blk_p1
+		p1_agachado = agch_p1
+		p1_no_ar    = ar_p1
 
 func _ready():
 	vida_atual = vida_maxima
@@ -47,12 +78,11 @@ func _ready():
 	if collision and collision.shape is CapsuleShape2D:
 		tamanho_colisao_original = Vector2(collision.shape.radius, collision.shape.height)
 
-
 func _physics_process(delta):
 	if morto:
 		_animated_sprite.play("die")
 		_animated_sprite.scale = Vector2(1.0, 1.0)
-		_animated_sprite.modulate = Color.WHITE 
+		_animated_sprite.modulate = Color.WHITE
 		if not is_on_floor():
 			velocity.y += gravity * FALL_GRAVITY_SCALE * delta
 			velocity.x = move_toward(velocity.x, 0, SPEED * 0.3)
@@ -62,16 +92,18 @@ func _physics_process(delta):
 		_aplicar_colisao_morto()
 		move_and_slide()
 		return
+
 	if invencivel:
 		tempo_invencibilidade -= delta
 		if tempo_invencibilidade <= 0:
 			invencivel = false
-			_animated_sprite.modulate = Color.WHITE  
+			_animated_sprite.modulate = Color.WHITE
+
 	if em_knockback:
 		tempo_knockback -= delta
 		if tempo_knockback <= 0:
 			em_knockback = false
-			_animated_sprite.modulate = Color.WHITE  
+			_animated_sprite.modulate = Color.WHITE
 		if not is_on_floor():
 			velocity.y += gravity * FALL_GRAVITY_SCALE * delta
 		else:
@@ -105,7 +137,7 @@ func _physics_process(delta):
 	ajustar_colisao_estado()
 	processar_animacoes()
 	verificar_dano_causado(delta)
-	
+
 func ajustar_colisao_estado():
 	if collision and collision.shape:
 		collision.shape = collision.shape.duplicate()
@@ -127,6 +159,9 @@ func ajustar_colisao_estado():
 		collision.shape.radius = raio_original
 		collision.position = Vector2(0, 0)
 
+# ─────────────────────────────────────────────
+#  PONTO DE ENTRADA DA IA
+# ─────────────────────────────────────────────
 func processar_logica_ia():
 	var direcao_para_p1 = player_1.global_position.x - global_position.x
 	var distancia_absoluta = abs(direcao_para_p1)
@@ -135,71 +170,259 @@ func processar_logica_ia():
 	if direcao_normalizada != 0:
 		_animated_sprite.flip_h = direcao_normalizada > 0
 
-	var acoes_possiveis = ["soco", "chute", "bloqueio", "agachar_soco", "agachar_chute", "pular", "aproximar"]
-	var melhor_acao = ""
-	var melhor_score = -999999.0
-
-	var p1_atacando = player_1.get("atacando") if "atacando" in player_1 else false
+	# Captura o estado atual do mundo
+	var p1_atacando  = player_1.get("atacando")  if "atacando"  in player_1 else false
 	var p1_bloqueando = player_1.get("bloqueando") if "bloqueando" in player_1 else false
-	var p1_agachado = player_1.get("agachado") if "agachado" in player_1 else false
-	var p1_no_ar = not player_1.is_on_floor()
+	var p1_agachado  = player_1.get("agachado")  if "agachado"  in player_1 else false
+	var p1_no_ar     = not player_1.is_on_floor()
+	var p1_vida      = player_1.get("vida_atual") if "vida_atual" in player_1 else 100.0
 
-	for acao in acoes_possiveis:
-		var score_atual = avaliar_utilidade_minimax(acao, distancia_absoluta, p1_atacando, p1_bloqueando, p1_agachado, p1_no_ar)
-		score_atual += randf_range(-5.0, 5.0)
-		if score_atual > melhor_score:
-			melhor_score = score_atual
-			melhor_acao = acao
+	var estado_raiz = EstadoJogo.new(
+		vida_atual, p1_vida, distancia_absoluta,
+		atacando, bloqueando, agachado, not is_on_floor(),
+		p1_atacando, p1_bloqueando, p1_agachado, p1_no_ar
+	)
+
+	# Chama o Minimax: profundidade 3, IA é o maximizador
+	var resultado = minimax(estado_raiz, 3, -INF, INF, true)
+	var melhor_acao = resultado[1]
 
 	executar_acao_escolhida(melhor_acao, direcao_normalizada, distancia_absoluta)
 
-func avaliar_utilidade_minimax(acao_ia, distancia, p1_ataca, p1_bloqueia, p1_agacha, p1_no_ar) -> float:
+# ─────────────────────────────────────────────
+#  MINIMAX COM ALPHA-BETA PRUNING
+#  Retorna [melhor_score, melhor_acao]
+#
+#  - maximizando == true  → vez da IA  (quer maximizar)
+#  - maximizando == false → vez do P1  (quer minimizar a vantagem da IA)
+# ─────────────────────────────────────────────
+func minimax(estado: EstadoJogo, profundidade: int, alpha: float, beta: float, maximizando: bool) -> Array:
+	# Caso base: profundidade zero ou jogo encerrado
+	if profundidade == 0 or estado.vida_ia <= 0 or estado.vida_p1 <= 0:
+		return [avaliar_estado(estado), "nenhuma"]
+
+	var acoes_ia  = ["soco", "chute", "bloqueio", "agachar_soco", "agachar_chute", "pular", "aproximar"]
+	# Ações que o P1 pode responder (usadas na camada minimizadora)
+	var acoes_p1  = ["atacar", "bloquear", "agachar", "pular", "recuar"]
+
+	if maximizando:
+		# ── Turno da IA: quer o maior score ──
+		var melhor_score = -INF
+		var melhor_acao  = acoes_ia[0]
+
+		for acao in acoes_ia:
+			var novo_estado = simular_acao_ia(estado, acao)
+			var resultado   = minimax(novo_estado, profundidade - 1, alpha, beta, false)
+			var score       = resultado[0]
+
+			# Pequeno ruído para desempatar sem tornar a IA previsível
+			score += randf_range(-2.0, 2.0)
+
+			if score > melhor_score:
+				melhor_score = score
+				melhor_acao  = acao
+
+			alpha = max(alpha, melhor_score)
+			if beta <= alpha:
+				break  # Poda beta: o minimizador nunca escolheria este ramo
+
+		return [melhor_score, melhor_acao]
+
+	else:
+		# ── Turno do P1: quer o menor score (pior para a IA) ──
+		var pior_score = INF
+		var acao_p1_escolhida = acoes_p1[0]
+
+		for acao in acoes_p1:
+			var novo_estado = simular_acao_p1(estado, acao)
+			var resultado   = minimax(novo_estado, profundidade - 1, alpha, beta, true)
+			var score       = resultado[0]
+
+			if score < pior_score:
+				pior_score = score
+				acao_p1_escolhida = acao
+
+			beta = min(beta, pior_score)
+			if beta <= alpha:
+				break  # Poda alpha: a IA nunca escolheria este ramo
+
+		return [pior_score, acao_p1_escolhida]
+
+# ─────────────────────────────────────────────
+#  SIMULAÇÃO: como o estado muda com a ação da IA
+# ─────────────────────────────────────────────
+func simular_acao_ia(e: EstadoJogo, acao: String) -> EstadoJogo:
+	var n = EstadoJogo.new(
+		e.vida_ia, e.vida_p1, e.distancia,
+		e.ia_atacando, e.ia_bloqueando, e.ia_agachado, e.ia_no_ar,
+		e.p1_atacando, e.p1_bloqueando, e.p1_agachado, e.p1_no_ar
+	)
+
+	match acao:
+		"soco":
+			n.ia_atacando = true
+			n.ia_agachado = false
+			if n.distancia <= DISTANCIA_CORPO_A_CORPO:
+				if n.p1_bloqueando and n.p1_agachado == false:
+					n.vida_p1 -= 10.0 * 0.1   # bloqueio alto reduz dano
+				elif not n.p1_bloqueando:
+					n.vida_p1 -= 10.0
+
+		"chute":
+			n.ia_atacando = true
+			n.ia_agachado = false
+			if n.distancia <= DISTANCIA_CORPO_A_CORPO:
+				if n.p1_bloqueando and n.p1_agachado:
+					n.vida_p1 -= 15.0 * 0.1   # bloqueio baixo reduz dano
+				elif not n.p1_bloqueando:
+					n.vida_p1 -= 15.0
+
+		"bloqueio":
+			n.ia_bloqueando = true
+			n.ia_atacando   = false
+			# Se P1 está atacando e a IA bloqueou, absorve o dano
+			if n.p1_atacando and n.distancia <= DISTANCIA_CORPO_A_CORPO:
+				n.vida_ia -= 5.0 * 0.1   # dano residual mínimo
+
+		"agachar_soco":
+			n.ia_agachado = true
+			n.ia_atacando = true
+			if n.distancia <= DISTANCIA_CORPO_A_CORPO:
+				if not n.p1_bloqueando or not n.p1_agachado:
+					n.vida_p1 -= 8.0
+
+		"agachar_chute":
+			n.ia_agachado = true
+			n.ia_atacando = true
+			if n.distancia <= DISTANCIA_CORPO_A_CORPO:
+				if not n.p1_bloqueando or not n.p1_agachado:
+					n.vida_p1 -= 12.0
+
+		"pular":
+			n.ia_no_ar  = true
+			n.distancia = max(50.0, n.distancia - 80.0)   # salta em direção ao P1
+
+		"aproximar":
+			n.distancia = max(0.0, n.distancia - SPEED * intervalo_decisao)
+
+	return n
+
+# ─────────────────────────────────────────────
+#  SIMULAÇÃO: resposta provável do P1
+# ─────────────────────────────────────────────
+func simular_acao_p1(e: EstadoJogo, acao: String) -> EstadoJogo:
+	var n = EstadoJogo.new(
+		e.vida_ia, e.vida_p1, e.distancia,
+		e.ia_atacando, e.ia_bloqueando, e.ia_agachado, e.ia_no_ar,
+		e.p1_atacando, e.p1_bloqueando, e.p1_agachado, e.p1_no_ar
+	)
+
+	match acao:
+		"atacar":
+			n.p1_atacando = true
+			if n.distancia <= DISTANCIA_CORPO_A_CORPO:
+				if n.ia_bloqueando:
+					n.vida_ia -= 10.0 * 0.1
+				else:
+					n.vida_ia -= 10.0
+
+		"bloquear":
+			n.p1_bloqueando = true
+			n.p1_atacando   = false
+
+		"agachar":
+			n.p1_agachado = true
+			n.p1_atacando = false
+			# Evita socos altos da IA
+			if n.ia_atacando and n.distancia <= DISTANCIA_CORPO_A_CORPO:
+				n.vida_ia -= 0.0   # IA perdeu o golpe
+
+		"pular":
+			n.p1_no_ar  = true
+			# Escapou de ataques baixos
+			n.p1_agachado = false
+
+		"recuar":
+			n.distancia += SPEED * intervalo_decisao * 0.8
+
+	return n
+
+# ─────────────────────────────────────────────
+#  FUNÇÃO DE AVALIAÇÃO HEURÍSTICA DO ESTADO
+#  Retorna um número: quanto maior, melhor para a IA
+# ─────────────────────────────────────────────
+func avaliar_estado(e: EstadoJogo) -> float:
+	# Jogo encerrado
+	if e.vida_ia <= 0:
+		return -10000.0
+	if e.vida_p1 <= 0:
+		return  10000.0
+
 	var score = 0.0
-	if acao_ia == "soco" or acao_ia == "chute":
-		if distancia > DISTANCIA_CORPO_A_CORPO:
-			score -= 50.0
-		else:
-			score += 40.0
-			if p1_ataca: score -= 20.0
-			if p1_bloqueia: score -= 30.0
-			if p1_agacha and acao_ia == "soco": score -= 40.0
 
-	elif acao_ia == "bloqueio":
-		if p1_ataca and distancia <= DISTANCIA_CORPO_A_CORPO:
-			score += 100.0
-		elif distancia > DISTANCIA_CORPO_A_CORPO:
-			score -= 20.0
+	# ── 1. Vantagem de vida ──────────────────
+	# Diferença de HP normalizada (-100 a +100)
+	score += (e.vida_ia - e.vida_p1) * 2.0
 
-	elif acao_ia == "agachar_soco" or acao_ia == "agachar_chute":
-		if distancia <= DISTANCIA_CORPO_A_CORPO:
-			if p1_no_ar: score += 90.0
-			elif p1_bloqueia: score += 50.0
+	# ── 2. Pressão ofensiva ──────────────────
+	# Atacar perto vale muito; atacar longe é desperdício de turno
+	if e.ia_atacando and e.distancia <= DISTANCIA_CORPO_A_CORPO:
+		score += 30.0
+	elif e.ia_atacando and e.distancia > DISTANCIA_CORPO_A_CORPO:
+		score -= 60.0   # penalidade forte: garantia de não acertar
 
-			else: score += 30.0
-		else:
-			score -= 50.0
+	# ── 3. Defesa inteligente ────────────────
+	# Bloquear quando P1 ataca de perto vale muito
+	if e.ia_bloqueando and e.p1_atacando and e.distancia <= DISTANCIA_CORPO_A_CORPO:
+		score += 40.0
 
-	elif acao_ia == "pular":
-		if p1_agacha and distancia <= DISTANCIA_CORPO_A_CORPO:
-			score += 60.0
-		elif distancia > DISTANCIA_CORPO_A_CORPO and randf() < 0.2:
-			score += 20.0
-		else:
-			score -= 10.0
+	# Mas bloquear sem necessidade é ruim (passividade)
+	if e.ia_bloqueando and not e.p1_atacando:
+		score -= 15.0
 
-	elif acao_ia == "aproximar":
-		if distancia > DISTANCIA_CORPO_A_CORPO:
-			score += 80.0
-		else:
-			score -= 70.0
+	# ── 4. Punição de erros do P1 ───────────
+	# P1 atacou e a IA não bloqueou = tomou dano
+	if e.p1_atacando and not e.ia_bloqueando and e.distancia <= DISTANCIA_CORPO_A_CORPO:
+		score -= 25.0
+
+	# ── 5. Controle de distância ─────────────
+	# Ficar muito longe sem motivo é ruim
+	if e.distancia > DISTANCIA_AFASTADO:
+		score -= 20.0
+
+	# Distância ideal para pressionar
+	if e.distancia <= DISTANCIA_CORPO_A_CORPO and not e.p1_atacando:
+		score += 15.0
+
+	# ── 6. Matchups posturais ────────────────
+	# Soco alto vs. agachado = IA acertou no ar mas errou no baixo
+	if e.ia_atacando and e.p1_agachado and not e.ia_agachado:
+		score -= 20.0   # soco alto não acerta agachado
+
+	# Chute baixo vs. agachado que bloqueou
+	if e.ia_agachado and e.ia_atacando and e.p1_agachado and e.p1_bloqueando:
+		score -= 10.0
+
+	# IA agachada vs. P1 no ar = boa posição defensiva
+	if e.ia_agachado and e.p1_no_ar:
+		score += 10.0
+
+	# ── 7. Perigo de levar dano ──────────────
+	if e.vida_ia < 30.0:
+		# HP crítico: priorizar sobrevivência
+		score += (e.ia_bloqueando if e.p1_atacando else 0.0) * 20.0
+		score -= 10.0   # penalidade de estar em risco
 
 	return score
 
+# ─────────────────────────────────────────────
+#  EXECUÇÃO (igual ao original, sem mudança)
+# ─────────────────────────────────────────────
 func executar_acao_escolhida(acao, direcao_normalizada, distancia):
 	if atacando:
 		return
 
-	agachado = false
+	agachado  = false
 	bloqueando = false
 
 	if not is_on_floor():
@@ -209,33 +432,49 @@ func executar_acao_escolhida(acao, direcao_normalizada, distancia):
 			_animated_sprite.play("jump_kick")
 		return
 
+	# Ataques só executam se o alvo está ao alcance;
+	# caso contrário a IA se aproxima automaticamente.
+	var ao_alcance = distancia <= DISTANCIA_CORPO_A_CORPO
+
 	match acao:
 		"soco":
-			velocity.x = move_toward(velocity.x, 0, SPEED)
-			atacando = true
-			tempo_ataque = duracao_ataque
-			animacao_ataque = "punch"
+			if ao_alcance:
+				velocity.x = move_toward(velocity.x, 0, SPEED)
+				atacando = true
+				tempo_ataque = duracao_ataque
+				animacao_ataque = "punch"
+			else:
+				velocity.x = direcao_normalizada * SPEED   # aproxima primeiro
 		"chute":
-			velocity.x = move_toward(velocity.x, 0, SPEED)
-			atacando = true
-			tempo_ataque = duracao_ataque
-			animacao_ataque = "kick"
+			if ao_alcance:
+				velocity.x = move_toward(velocity.x, 0, SPEED)
+				atacando = true
+				tempo_ataque = duracao_ataque
+				animacao_ataque = "kick"
+			else:
+				velocity.x = direcao_normalizada * SPEED
 		"bloqueio":
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 			bloqueando = true
 			animacao_ataque = "block"
 		"agachar_soco":
-			velocity.x = move_toward(velocity.x, 0, SPEED)
-			agachado = true
-			atacando = true
-			tempo_ataque = duracao_ataque
-			animacao_ataque = "shift_punch"
+			if ao_alcance:
+				velocity.x = move_toward(velocity.x, 0, SPEED)
+				agachado  = true
+				atacando  = true
+				tempo_ataque = duracao_ataque
+				animacao_ataque = "shift_punch"
+			else:
+				velocity.x = direcao_normalizada * SPEED
 		"agachar_chute":
-			velocity.x = move_toward(velocity.x, 0, SPEED)
-			agachado = true
-			atacando = true
-			tempo_ataque = duracao_ataque
-			animacao_ataque = "shift_kick"
+			if ao_alcance:
+				velocity.x = move_toward(velocity.x, 0, SPEED)
+				agachado  = true
+				atacando  = true
+				tempo_ataque = duracao_ataque
+				animacao_ataque = "shift_kick"
+			else:
+				velocity.x = direcao_normalizada * SPEED
 		"pular":
 			if is_on_floor():
 				velocity.y = JUMP_VELOCITY
@@ -243,6 +482,9 @@ func executar_acao_escolhida(acao, direcao_normalizada, distancia):
 		"aproximar":
 			velocity.x = direcao_normalizada * SPEED
 
+# ─────────────────────────────────────────────
+#  ANIMAÇÕES, DANO, VIDA (inalterados)
+# ─────────────────────────────────────────────
 func processar_animacoes():
 	if em_knockback:
 		if _animated_sprite.sprite_frames.has_animation("shock"):
@@ -251,7 +493,7 @@ func processar_animacoes():
 		else:
 			_animated_sprite.play("stop")
 		return
-		
+
 	if not is_on_floor():
 		if atacando and animacao_ataque != "":
 			_animated_sprite.play(animacao_ataque)
@@ -268,7 +510,7 @@ func processar_animacoes():
 			_animated_sprite.scale = Vector2(1.3, 1.3)
 			_animated_sprite.offset = Vector2(0, -10)
 	else:
-		_animated_sprite.scale = Vector2(1.0, 1.0)
+		_animated_sprite.scale  = Vector2(1.0, 1.0)
 		_animated_sprite.offset = Vector2(0, 0)
 
 		if agachado:
@@ -276,17 +518,17 @@ func processar_animacoes():
 			_animated_sprite.play(anim_alvo)
 			match anim_alvo:
 				"shift_punch":
-					_animated_sprite.scale = Vector2(1.2, 1.2)   
-					_animated_sprite.offset = Vector2(0, 50)     
+					_animated_sprite.scale  = Vector2(1.2, 1.2)
+					_animated_sprite.offset = Vector2(0, 50)
 				"shift_kick":
-					_animated_sprite.scale = Vector2(1.0, 1.0)  
-					_animated_sprite.offset = Vector2(0, 50)     
-				"shift_block": 
-					_animated_sprite.scale = Vector2(0.9, 0.9)   
-					_animated_sprite.offset = Vector2(0, 50)      
+					_animated_sprite.scale  = Vector2(1.0, 1.0)
+					_animated_sprite.offset = Vector2(0, 50)
+				"shift_block":
+					_animated_sprite.scale  = Vector2(0.9, 0.9)
+					_animated_sprite.offset = Vector2(0, 50)
 				"shift":
-					_animated_sprite.scale = Vector2(1.1, 1.1)   
-					_animated_sprite.offset = Vector2(0, 50)  
+					_animated_sprite.scale  = Vector2(1.1, 1.1)
+					_animated_sprite.offset = Vector2(0, 50)
 		elif atacando or bloqueando:
 			_animated_sprite.play(animacao_ataque)
 		elif abs(velocity.x) > 10:
@@ -297,7 +539,6 @@ func processar_animacoes():
 func receber_dano(quantidade: float, direcao_dano: float, tipo_golpe: String = "alto"):
 	if morto or invencivel:
 		return
-		
 	if bloqueando:
 		if (not agachado and tipo_golpe == "alto") or (agachado and tipo_golpe == "baixo"):
 			vida_atual -= quantidade * 0.1
@@ -310,7 +551,6 @@ func receber_dano(quantidade: float, direcao_dano: float, tipo_golpe: String = "
 	_animated_sprite.modulate = Color(1, 0.2, 0.2, 1)
 	invencivel = true
 	tempo_invencibilidade = 0.4
-	
 	if vida_atual <= 0:
 		morrer()
 	else:
@@ -320,61 +560,49 @@ func receber_dano(quantidade: float, direcao_dano: float, tipo_golpe: String = "
 			_animated_sprite.play("stop")
 		em_knockback = true
 		tempo_knockback = 0.25
-		velocity.x = direcao_dano * 400.0
+		velocity.x   = direcao_dano * 400.0
 		if is_on_floor():
 			velocity.y = -300.0
-			
+
 func verificar_dano_causado(delta):
 	if not player_1 or not is_instance_valid(player_1):
 		return
-	tempo_dano -= delta  
+	tempo_dano -= delta
 	if tempo_dano > 0:
 		return
 
-	var anim_atual = _animated_sprite.animation
-	var distancia = abs(player_1.global_position.x - global_position.x)
+	var anim_atual  = _animated_sprite.animation
+	var distancia   = abs(player_1.global_position.x - global_position.x)
 	var direcao_dano = sign(player_1.global_position.x - global_position.x)
-	var dano = 0.0
-	var tipo_golpe = "alto"
+	var dano        = 0.0
+	var tipo_golpe  = "alto"
 
 	match anim_atual:
-		"punch":
-			dano = 10.0
-			tipo_golpe = "alto"
-		"kick":
-			dano = 15.0
-			tipo_golpe = "baixo"
-		"shift_punch":
-			dano = 8.0
-			tipo_golpe = "baixo"
-		"shift_kick":
-			dano = 12.0
-			tipo_golpe = "baixo"
-		"jump_punch":
-			dano = 13.0
-			tipo_golpe = "alto"
-		"jump_kick":
-			dano = 18.0
-			tipo_golpe = "alto"
+		"punch":      dano = 10.0;  tipo_golpe = "alto"
+		"kick":       dano = 15.0;  tipo_golpe = "baixo"
+		"shift_punch":dano =  8.0;  tipo_golpe = "baixo"
+		"shift_kick": dano = 12.0;  tipo_golpe = "baixo"
+		"jump_punch": dano = 13.0;  tipo_golpe = "alto"
+		"jump_kick":  dano = 18.0;  tipo_golpe = "alto"
 
 	if dano > 0 and distancia <= DISTANCIA_CORPO_A_CORPO:
 		player_1.receber_dano(dano, direcao_dano, tipo_golpe)
 		tempo_dano = intervalo_dano
-		
+
 func morrer():
-	morto = true
-	velocity = Vector2.ZERO
+	morto     = true
+	velocity  = Vector2.ZERO
 	collision.rotation = 0
 	call_deferred("_aplicar_colisao_morto")
 
 func _aplicar_colisao_morto():
 	if not collision.shape is CapsuleShape2D:
 		return
-	var raio_original = tamanho_colisao_original.x
+	var raio_original   = tamanho_colisao_original.x
 	var altura_original = tamanho_colisao_original.y
 	collision.shape.radius = altura_original * 0.25
 	collision.shape.height = altura_original * 0.8
-	collision.position = Vector2(0, altura_original * 0.35)
+	collision.position     = Vector2(0, altura_original * 0.35)
 
 func atualizar_barra_vida():
 	if barra_vida:
