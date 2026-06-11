@@ -71,7 +71,7 @@ animations = [{
 "texture": ExtResource("4_ngtxa")
 }],
 "loop": true,
-"name": &"jump kick",
+"name": &"jump_kick",
 "speed": 5.0
 }, {
 "frames": [{
@@ -187,7 +187,7 @@ script = ExtResource("1_oc1kf")
 [node name="Moves" type="AnimatedSprite2D" parent="." unique_id=570971162]
 scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_v7tvf")
-animation = &"begin"
+animation = &"jump_kick"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2134461329]
 shape = SubResource("CapsuleShape2D_oc1kf")
