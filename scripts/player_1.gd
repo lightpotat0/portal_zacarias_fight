@@ -3,7 +3,6 @@ extends CharacterBody2D
 @onready var _animated_sprite = $Moves
 @onready var collision = $CollisionShape2D
 @onready var barra_vida: TextureProgressBar = $Bars/Bar/TextureProgressBar
-
 @export var player_2: CharacterBody2D
 
 const SPEED            = 250.0
@@ -11,14 +10,10 @@ const JUMP_VELOCITY    = -1300.0
 const GRAVITY_SCALE    = 3
 const FALL_GRAVITY_SCALE = 5.0
 const ALCANCE_ATAQUE   = 150.0
-
-# ── Durações ────────────────────────────────────────────────────────────────
-const DURACAO_ATAQUE   = 0.35   # quanto tempo o ataque fica ativo
-const INTERVALO_DANO   = 0.4    # cooldown entre danos causados
+const DURACAO_ATAQUE   = 0.35   
+const INTERVALO_DANO   = 0.4  
 
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
-
-# ── Estado ──────────────────────────────────────────────────────────────────
 var agachado           = false
 var atacando           = false
 var bloqueando         = false
@@ -36,13 +31,10 @@ var tempo_invencibilidade = 0.0
 
 var tamanho_colisao_original = Vector2.ZERO
 
-var tempo_ataque       = 0.0   # timer de duração do ataque atual
-var tempo_dano_causado = 0.0   # cooldown anti-dano múltiplo
+var tempo_ataque       = 0.0  
+var tempo_dano_causado = 0.0  
 
 var bloqueio_direcao_travada = null
-
-# ── Escala padrão ────────────────────────────────────────────────────────────
-# Centraliza todas as escalas aqui para não ficar espalhado em processar_animacoes
 const ESCALA_PADRAO    = Vector2(1.4, 1.4)
 const ESCALA_AGACHADO  = Vector2(1.1, 1.1)
 const ESCALA_PULO      = Vector2(1.5, 1.5)
@@ -60,7 +52,6 @@ func _ready():
 				break
 
 func _physics_process(delta):
-	# ── Morto ────────────────────────────────────────────────────────────────
 	if morto:
 		_animated_sprite.play("die")
 		_animated_sprite.scale = ESCALA_PADRAO
@@ -71,8 +62,6 @@ func _physics_process(delta):
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 		move_and_slide()
 		return
-
-	# ── Knockback ────────────────────────────────────────────────────────────
 	if em_knockback:
 		tempo_knockback -= delta
 		if tempo_knockback <= 0:
@@ -86,26 +75,20 @@ func _physics_process(delta):
 		verificar_dano_causado(delta)
 		return
 
-	# ── Invencibilidade ───────────────────────────────────────────────────────
 	if invencivel:
 		tempo_invencibilidade -= delta
 		if tempo_invencibilidade <= 0:
 			invencivel = false
 			_animated_sprite.modulate = Color.WHITE
 
-	# ── Timer do ataque ───────────────────────────────────────────────────────
-	# Ataque expira automaticamente — sem isso o personagem fica travado atacando
 	if atacando:
 		tempo_ataque -= delta
 		if tempo_ataque <= 0:
 			atacando = false
 			animacao_ataque = ""
 
-	# ── Gravidade ─────────────────────────────────────────────────────────────
 	if not is_on_floor():
 		velocity.y += gravity * (GRAVITY_SCALE if velocity.y < 0 else FALL_GRAVITY_SCALE) * delta
-
-	# ── Pulo ──────────────────────────────────────────────────────────────────
 	if Input.is_action_just_pressed("x") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 		agachado   = false
@@ -114,15 +97,10 @@ func _physics_process(delta):
 		animacao_ataque = ""
 		bloqueio_direcao_travada = null
 
-	# ── Agachar ───────────────────────────────────────────────────────────────
 	agachado = Input.is_action_pressed("baixo") and is_on_floor()
-
-	# ── Direção horizontal ────────────────────────────────────────────────────
 	var direction := Input.get_axis("left", "right")
 	if direction != 0:
 		_animated_sprite.flip_h = direction < 0
-
-	# ── Ações no chão (não agachado) ──────────────────────────────────────────
 	if is_on_floor() and not agachado:
 		if Input.is_action_just_pressed("quadrado") and not atacando:
 			_iniciar_ataque("punch", "alto")
@@ -134,12 +112,10 @@ func _physics_process(delta):
 			bloqueando = true
 			animacao_ataque = "block"
 		else:
-			# Só cancela o bloqueio se o botão foi solto
 			if not Input.is_action_pressed("o"):
 				bloqueando = false
 				bloqueio_direcao_travada = null
 
-	# ── Ações agachado ────────────────────────────────────────────────────────
 	if is_on_floor() and agachado:
 		if Input.is_action_just_pressed("quadrado") and not atacando:
 			_iniciar_ataque("shift_punch", "baixo")
@@ -155,8 +131,6 @@ func _physics_process(delta):
 				bloqueando = false
 				bloqueio_direcao_travada = null
 
-	# ── Movimento horizontal ──────────────────────────────────────────────────
-	# Bloqueio e ataque no chão travam o movimento
 	var trava_movimento = bloqueando or (atacando and is_on_floor())
 	if direction != 0 and not trava_movimento and not agachado:
 		velocity.x = direction * SPEED
@@ -168,9 +142,6 @@ func _physics_process(delta):
 	verificar_dano_causado(delta)
 	processar_animacoes(direction)
 
-# ─────────────────────────────────────────────────────────────────────────────
-#  Helpers
-# ─────────────────────────────────────────────────────────────────────────────
 func _iniciar_ataque(anim: String, tipo: String):
 	atacando       = true
 	bloqueando     = false
@@ -211,7 +182,6 @@ func receber_dano(quantidade: float, direcao_dano: float, tipo_golpe: String = "
 	if morto or invencivel:
 		return
 
-	# ── Verifica bloqueio ─────────────────────────────────────────────────────
 	if bloqueando and bloqueio_direcao_travada != null:
 		var atacante_vem_da_esquerda: bool = direcao_dano > 0
 		var bloqueio_olha_esquerda: bool   = bloqueio_direcao_travada
@@ -220,7 +190,6 @@ func receber_dano(quantidade: float, direcao_dano: float, tipo_golpe: String = "
 			(not atacante_vem_da_esquerda and bloqueio_olha_esquerda)
 		)
 		if not atacante_nas_costas:
-			# Bloqueio alto absorve golpes altos; bloqueio baixo absorve golpes baixos
 			var bloqueio_valido = (
 				(not agachado and tipo_golpe == "alto") or
 				(agachado     and tipo_golpe == "baixo")
@@ -229,7 +198,6 @@ func receber_dano(quantidade: float, direcao_dano: float, tipo_golpe: String = "
 				bloqueio_com_sucesso(quantidade, direcao_dano)
 				return
 
-	# ── Toma dano ─────────────────────────────────────────────────────────────
 	vida_atual -= quantidade
 	atualizar_barra_vida()
 	_animated_sprite.modulate = Color(1, 0.2, 0.2, 1)
@@ -250,7 +218,6 @@ func bloqueio_com_sucesso(quantidade: float = 0.0, direcao_dano: float = 0.0):
 	var dano_residual = quantidade * 0.1
 	vida_atual = max(0.0, vida_atual - dano_residual)
 	atualizar_barra_vida()
-	# Flash mais suave para indicar bloqueio (azulado em vez de vermelho)
 	_animated_sprite.modulate = Color(0.6, 0.8, 1.0, 1.0)
 	invencivel = true
 	tempo_invencibilidade = 0.15
@@ -292,7 +259,6 @@ func ajustar_colisao_estado():
 
 func processar_animacoes(direction: float):
 	if not is_on_floor():
-		# ── No ar ──────────────────────────────────────────────────────────────
 		if Input.is_action_pressed("quadrado"):
 			_animated_sprite.play("jump_punch")
 			_animated_sprite.scale  = ESCALA_SOCO_AR
@@ -307,7 +273,6 @@ func processar_animacoes(direction: float):
 			_animated_sprite.offset = Vector2(0, -10)
 		return
 
-	# ── No chão ────────────────────────────────────────────────────────────────
 	_animated_sprite.offset = Vector2(0, 0)
 
 	if agachado:
