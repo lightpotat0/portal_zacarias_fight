@@ -12,34 +12,27 @@ const FALL_GRAVITY_SCALE = 5.0
 const ALCANCE_ATAQUE   = 150.0
 const DURACAO_ATAQUE   = 0.35   
 const INTERVALO_DANO   = 0.4  
-
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 var agachado           = false
 var atacando           = false
 var bloqueando         = false
 var animacao_ataque    = ""
 var tipo_ataque_atual: String = "alto"
-
 var vida_maxima        = 100.0
 var vida_atual         = 100.0
 var morto              = false
-
 var em_knockback       = false
 var tempo_knockback    = 0.0
 var invencivel         = false
 var tempo_invencibilidade = 0.0
-
 var tamanho_colisao_original = Vector2.ZERO
-
 var tempo_ataque       = 0.0  
 var tempo_dano_causado = 0.0  
-
 var bloqueio_direcao_travada = null
 const ESCALA_PADRAO    = Vector2(1.4, 1.4)
 const ESCALA_AGACHADO  = Vector2(1.1, 1.1)
 const ESCALA_PULO      = Vector2(1.5, 1.5)
 const ESCALA_SOCO_AR   = Vector2(1.3, 1.3)
-
 func _ready():
 	vida_atual = vida_maxima
 	atualizar_barra_vida()
