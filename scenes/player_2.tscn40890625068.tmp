@@ -1,0 +1,193 @@
+[gd_scene format=3 uid="uid://dsclvyuci1etl"]
+
+[ext_resource type="Script" uid="uid://bpveao4vppjbf" path="res://scripts/player_2.gd" id="1_oc1kf"]
+[ext_resource type="Texture2D" uid="uid://coegrywlp45a5" path="res://sprites/character/second player/stopped.png" id="2_0mr0g"]
+[ext_resource type="Texture2D" uid="uid://4n7isk5xni6v" path="res://sprites/character/second player/shield.png" id="2_60kbs"]
+[ext_resource type="Texture2D" uid="uid://c8de76j3jxhj1" path="res://sprites/character/second player/jump.png" id="2_v7tvf"]
+[ext_resource type="Texture2D" uid="uid://dlbvx5f5p32b1" path="res://sprites/character/second player/fatality1.png" id="2_vxqa6"]
+[ext_resource type="Texture2D" uid="uid://14uvxki17yei" path="res://sprites/character/second player/punch_1.png" id="3_t4bc4"]
+[ext_resource type="Texture2D" uid="uid://cj1a08msty715" path="res://sprites/character/second player/fatality2.png" id="3_vo2i2"]
+[ext_resource type="Texture2D" uid="uid://b7ni7lygbvki3" path="res://sprites/character/second player/jump_kick.png" id="4_ngtxa"]
+[ext_resource type="Texture2D" uid="uid://b7fcyd82urmcg" path="res://sprites/character/second player/fatality3.png" id="4_vxqa6"]
+[ext_resource type="Texture2D" uid="uid://yj0nooc7kaq3" path="res://sprites/character/second player/punch_2.png" id="4_wtgcc"]
+[ext_resource type="Texture2D" uid="uid://5w3jpmwhdy1c" path="res://sprites/character/second player/shift.png" id="5_jbo5h"]
+[ext_resource type="Texture2D" uid="uid://c83765too52gf" path="res://sprites/character/second player/jump_punch.png" id="5_mu5be"]
+[ext_resource type="Texture2D" uid="uid://don50f1ylbwr" path="res://sprites/character/second player/shock.png" id="6_60kbs"]
+[ext_resource type="Texture2D" uid="uid://cpx8cennm1nsu" path="res://sprites/character/second player/kick1.png" id="6_bolrf"]
+[ext_resource type="Texture2D" uid="uid://cf1oue8hjbvil" path="res://sprites/character/second player/shock2.png" id="7_3ooxp"]
+[ext_resource type="Texture2D" uid="uid://cp3ky1ehib5i5" path="res://sprites/character/second player/kick2.png" id="7_vxqa6"]
+[ext_resource type="Texture2D" uid="uid://b83mdhgbfljfh" path="res://sprites/character/second player/fly_shock1.png" id="8_ab820"]
+[ext_resource type="Texture2D" uid="uid://dq5ahc28xcn3y" path="res://sprites/character/second player/down.png" id="9_wtgcc"]
+[ext_resource type="Texture2D" uid="uid://clrlccbth6ljb" path="res://sprites/character/second player/shift_block.png" id="11_ngtxa"]
+[ext_resource type="Texture2D" uid="uid://c6kco23dou0ut" path="res://sprites/character/second player/shift_kick.png" id="11_vo2i2"]
+[ext_resource type="Texture2D" uid="uid://bb2k0i1ntot54" path="res://sprites/character/second player/shift_punch.png" id="13_mu5be"]
+[ext_resource type="Texture2D" uid="uid://qkvee188cv51" path="res://sprites/character/second player/walk1.png" id="19_ngtxa"]
+[ext_resource type="Texture2D" uid="uid://beof71uv16ysd" path="res://sprites/character/second player/walk3.png" id="20_mu5be"]
+[ext_resource type="Texture2D" uid="uid://cgakatv510nq4" path="res://sprites/character/second player/walk2.png" id="21_bolrf"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_v7tvf"]
+resource_name = "walk"
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_vxqa6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_vo2i2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_vxqa6")
+}],
+"loop": true,
+"name": &"begin",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_60kbs")
+}],
+"loop": true,
+"name": &"block",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("9_wtgcc")
+}],
+"loop": true,
+"name": &"die",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_v7tvf")
+}],
+"loop": true,
+"name": &"jump",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_ngtxa")
+}],
+"loop": true,
+"name": &"jump_kick",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_mu5be")
+}],
+"loop": true,
+"name": &"jump_punch",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_bolrf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_vxqa6")
+}],
+"loop": true,
+"name": &"kick",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_t4bc4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_wtgcc")
+}],
+"loop": true,
+"name": &"punch",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_jbo5h")
+}],
+"loop": true,
+"name": &"shift",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("11_ngtxa")
+}],
+"loop": true,
+"name": &"shift_block",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("11_vo2i2")
+}],
+"loop": true,
+"name": &"shift_kick",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("13_mu5be")
+}],
+"loop": true,
+"name": &"shift_punch",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_60kbs")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_3ooxp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_ab820")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_wtgcc")
+}],
+"loop": true,
+"name": &"shock",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_0mr0g")
+}],
+"loop": true,
+"name": &"stop",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("19_ngtxa")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20_mu5be")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21_bolrf")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_oc1kf"]
+radius = 77.0
+height = 302.0
+
+[node name="Player2" type="CharacterBody2D" unique_id=454800802]
+scale = Vector2(0.8, 0.8)
+script = ExtResource("1_oc1kf")
+
+[node name="Moves" type="AnimatedSprite2D" parent="." unique_id=570971162]
+scale = Vector2(0.5, 0.5)
+sprite_frames = SubResource("SpriteFrames_v7tvf")
+animation = &"jump_kick"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2134461329]
+shape = SubResource("CapsuleShape2D_oc1kf")

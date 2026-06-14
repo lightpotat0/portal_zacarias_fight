@@ -342,9 +342,9 @@ func avaliar_estado(e: EstadoJogo) -> float:
 	if e.ia_agachado and e.p1_no_ar:
 		score += 10.0
 	if e.vida_ia < 30.0:
-		score += (e.ia_bloqueando if e.p1_atacando else 0.0) * 20.0
-		score -= 10.0 
-
+		if e.ia_bloqueando and e.p1_atacando:
+			score += 20.0
+		score -= 10.0
 	return score
 
 func executar_acao_escolhida(acao, direcao_normalizada, distancia):

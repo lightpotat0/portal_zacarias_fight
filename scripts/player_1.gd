@@ -33,6 +33,8 @@ const ESCALA_PADRAO    = Vector2(1.4, 1.4)
 const ESCALA_AGACHADO  = Vector2(1.1, 1.1)
 const ESCALA_PULO      = Vector2(1.5, 1.5)
 const ESCALA_SOCO_AR   = Vector2(1.3, 1.3)
+const ESCALA_ANDANDO = Vector2(2.5, 2.5)
+
 func _ready():
 	vida_atual = vida_maxima
 	atualizar_barra_vida()
@@ -207,7 +209,6 @@ func receber_dano(quantidade: float, direcao_dano: float, tipo_golpe: String = "
 			velocity.y = -300.0
 
 func bloqueio_com_sucesso(quantidade: float = 0.0, direcao_dano: float = 0.0):
-	# Dano residual mínimo — bloqueio perfeito não é grátis
 	var dano_residual = quantidade * 0.1
 	vida_atual = max(0.0, vida_atual - dano_residual)
 	atualizar_barra_vida()
@@ -290,7 +291,7 @@ func processar_animacoes(direction: float):
 		_animated_sprite.scale = ESCALA_PADRAO
 		_animated_sprite.play(animacao_ataque)
 	elif direction != 0:
-		_animated_sprite.scale = ESCALA_PADRAO
+		_animated_sprite.scale = ESCALA_ANDANDO
 		_animated_sprite.play("walk")
 	else:
 		_animated_sprite.scale = ESCALA_PADRAO
