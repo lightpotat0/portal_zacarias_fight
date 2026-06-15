@@ -84,7 +84,6 @@ func _physics_process(delta):
 		else:
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 			velocity.y = 0
-		_aplicar_colisao_morto()
 		move_and_slide()
 		return
 
@@ -166,14 +165,13 @@ func processar_logica_ia():
 	var p1_agachado  = player_1.get("agachado")  if "agachado"  in player_1 else false
 	var p1_no_ar     = not player_1.is_on_floor()
 	var p1_vida      = player_1.get("vida_atual") if "vida_atual" in player_1 else 100.0
-
 	var estado_raiz = EstadoJogo.new(
 		vida_atual, p1_vida, distancia_absoluta,
 		atacando, bloqueando, agachado, not is_on_floor(),
 		p1_atacando, p1_bloqueando, p1_agachado, p1_no_ar
 	)
 
-	var resultado = minimax(estado_raiz, 3, -INF, INF, true)
+	var resultado = minimax(estado_raiz, 4, -INF, INF, true)
 	var melhor_acao = resultado[1]
 
 	executar_acao_escolhida(melhor_acao, direcao_normalizada, distancia_absoluta)
@@ -183,7 +181,15 @@ func minimax(estado: EstadoJogo, profundidade: int, alpha: float, beta: float, m
 		return [avaliar_estado(estado), "nenhuma"]
 
 	var acoes_ia  = ["soco", "chute", "bloqueio", "agachar_soco", "agachar_chute", "pular", "aproximar"]
-	var acoes_p1  = ["atacar", "bloquear", "agachar", "pular", "recuar"]
+	var acoes_p1 = [
+		"atacar",
+		"atacar",
+		"atacar",
+		"bloquear",
+		"agachar",
+		"pular",
+	    "recuar"
+	]
 
 	if maximizando:
 		var melhor_score = -INF
@@ -325,11 +331,11 @@ func avaliar_estado(e: EstadoJogo) -> float:
 	elif e.ia_atacando and e.distancia > DISTANCIA_CORPO_A_CORPO:
 		score -= 60.0   
 	if e.ia_bloqueando and e.p1_atacando and e.distancia <= DISTANCIA_CORPO_A_CORPO:
-		score += 40.0
+		score += 80.0
 	if e.ia_bloqueando and not e.p1_atacando:
 		score -= 15.0
 	if e.p1_atacando and not e.ia_bloqueando and e.distancia <= DISTANCIA_CORPO_A_CORPO:
-		score -= 25.0
+		score -= 60.0
 	if e.distancia > DISTANCIA_AFASTADO:
 		score -= 20.0
 	if e.distancia <= DISTANCIA_CORPO_A_CORPO and not e.p1_atacando:
@@ -513,19 +519,17 @@ func verificar_dano_causado(delta):
 		tempo_dano = intervalo_dano
 
 func morrer():
-	morto     = true
-	velocity  = Vector2.ZERO
-	collision.rotation = 0
-	call_deferred("_aplicar_colisao_morto")
+	morto    = true
+	velocity = Vector2.ZERO
 
 func _aplicar_colisao_morto():
 	if not collision.shape is CapsuleShape2D:
 		return
-	var raio_original   = tamanho_colisao_original.x
-	var altura_original = tamanho_colisao_original.y
-	collision.shape.radius = altura_original * 0.25
-	collision.shape.height = altura_original * 0.8
-	collision.position     = Vector2(0, altura_original * 0.35)
+	var h = tamanho_colisao_original.y
+	collision.shape = collision.shape.duplicate()
+	collision.shape.radius   = h * 0.25
+	collision.shape.height   = h * 0.5
+	collision.position       = Vector2(0, h * 0.25)
 
 func atualizar_barra_vida():
 	if barra_vida:

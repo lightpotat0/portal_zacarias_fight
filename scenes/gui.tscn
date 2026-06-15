@@ -1,8 +1,5 @@
 [gd_scene format=3 uid="uid://nwkqdd3qfwu8"]
 
-[ext_resource type="Texture2D" uid="uid://bcch0nuql5ksv" path="res://sprites/menu/seca.png" id="1_mfius"]
-[ext_resource type="Texture2D" uid="uid://3t3vg8mb57cx" path="res://sprites/menu/cheia.png" id="2_ynd5l"]
-
 [node name="GUI" type="Control" unique_id=236178913]
 layout_mode = 3
 anchors_preset = 15
@@ -32,8 +29,6 @@ layout_mode = 2
 [node name="TextureProgressBar" type="TextureProgressBar" parent="Player1/Bars/Bar" unique_id=1428301097]
 layout_mode = 2
 value = 100.0
-texture_under = ExtResource("1_mfius")
-texture_progress = ExtResource("2_ynd5l")
 
 [node name="Counters" type="HBoxContainer" parent="Player1" unique_id=864559486]
 layout_mode = 2
@@ -56,8 +51,6 @@ layout_mode = 2
 [node name="TextureProgressBar" type="TextureProgressBar" parent="Player2/Bars/Bar" unique_id=1718936748]
 layout_mode = 2
 value = 100.0
-texture_under = ExtResource("1_mfius")
-texture_progress = ExtResource("2_ynd5l")
 
 [node name="Counters" type="HBoxContainer" parent="Player2" unique_id=1642450902]
 layout_mode = 2
