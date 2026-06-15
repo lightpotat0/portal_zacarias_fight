@@ -173,7 +173,6 @@ func processar_logica_ia():
 		p1_atacando, p1_bloqueando, p1_agachado, p1_no_ar
 	)
 
-	# Chama o Minimax: profundidade 3, IA é o maximizador
 	var resultado = minimax(estado_raiz, 3, -INF, INF, true)
 	var melhor_acao = resultado[1]
 
