@@ -12,9 +12,6 @@ const FALL_GRAVITY_SCALE = 5.0
 const ALCANCE_ATAQUE     = 150.0
 const DURACAO_ATAQUE     = 0.35
 const INTERVALO_DANO     = 0.4
-# ── Cooldown entre ataques (anti-spam) ──────────────────────────────────────
-# Tempo mínimo entre um ataque e o próximo, mesmo após a animação acabar.
-# Aumente para tornar os ataques mais lentos; diminua para mais responsivos.
 const COOLDOWN_ATAQUE    = 0.45
 
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
@@ -38,7 +35,7 @@ var tamanho_colisao_original = Vector2.ZERO
 
 var tempo_ataque        = 0.0
 var tempo_dano_causado  = 0.0
-var tempo_cooldown_ataque = 0.0   # <- novo: bloqueia spam
+var tempo_cooldown_ataque = 0.0  
 
 var bloqueio_direcao_travada = null
 
@@ -60,7 +57,6 @@ func _ready():
 				break
 
 func _physics_process(delta):
-	# ── Morto ────────────────────────────────────────────────────────────────
 	if morto:
 		_animated_sprite.play("die")
 		_animated_sprite.scale = ESCALA_PADRAO
@@ -79,7 +75,6 @@ func _physics_process(delta):
 		move_and_slide()
 		return
 
-	# ── Knockback ────────────────────────────────────────────────────────────
 	if em_knockback:
 		tempo_knockback -= delta
 		if tempo_knockback <= 0:
@@ -93,7 +88,6 @@ func _physics_process(delta):
 		verificar_dano_causado(delta)
 		return
 
-	# ── Timers ───────────────────────────────────────────────────────────────
 	if invencivel:
 		tempo_invencibilidade -= delta
 		if tempo_invencibilidade <= 0:
@@ -106,15 +100,12 @@ func _physics_process(delta):
 			atacando = false
 			animacao_ataque = ""
 
-	# Cooldown de ataque conta mesmo fora do estado "atacando"
 	if tempo_cooldown_ataque > 0:
 		tempo_cooldown_ataque -= delta
 
-	# ── Gravidade ─────────────────────────────────────────────────────────────
 	if not is_on_floor():
 		velocity.y += gravity * (GRAVITY_SCALE if velocity.y < 0 else FALL_GRAVITY_SCALE) * delta
 
-	# ── Pulo ──────────────────────────────────────────────────────────────────
 	if Input.is_action_just_pressed("x") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 		agachado   = false
@@ -123,15 +114,12 @@ func _physics_process(delta):
 		animacao_ataque = ""
 		bloqueio_direcao_travada = null
 
-	# ── Agachar ───────────────────────────────────────────────────────────────
 	agachado = Input.is_action_pressed("baixo") and is_on_floor()
 
-	# ── Direção horizontal ────────────────────────────────────────────────────
 	var direction := Input.get_axis("left", "right")
 	if direction != 0:
 		_animated_sprite.flip_h = direction < 0
 
-	# ── Ações no chão (em pé) ────────────────────────────────────────────────
 	if is_on_floor() and not agachado:
 		if Input.is_action_just_pressed("quadrado") and _pode_atacar():
 			_iniciar_ataque("punch", "alto")
@@ -147,7 +135,6 @@ func _physics_process(delta):
 				bloqueando = false
 				bloqueio_direcao_travada = null
 
-	# ── Ações agachado ────────────────────────────────────────────────────────
 	if is_on_floor() and agachado:
 		if Input.is_action_just_pressed("quadrado") and _pode_atacar():
 			_iniciar_ataque("shift_punch", "baixo")
@@ -163,7 +150,6 @@ func _physics_process(delta):
 				bloqueando = false
 				bloqueio_direcao_travada = null
 
-	# ── Movimento horizontal ──────────────────────────────────────────────────
 	var trava_movimento = bloqueando or (atacando and is_on_floor())
 	if direction != 0 and not trava_movimento and not agachado:
 		velocity.x = direction * SPEED
@@ -175,11 +161,6 @@ func _physics_process(delta):
 	verificar_dano_causado(delta)
 	processar_animacoes(direction)
 
-# ── Helpers ──────────────────────────────────────────────────────────────────
-
-# Retorna true somente se o cooldown zerou e não está no meio de um ataque.
-# Isso impede spam: mesmo que a animação termine, o próximo ataque
-# só sai depois de COOLDOWN_ATAQUE segundos do início do anterior.
 func _pode_atacar() -> bool:
 	return not atacando and tempo_cooldown_ataque <= 0.0
 
@@ -190,7 +171,7 @@ func _iniciar_ataque(anim: String, tipo: String):
 	animacao_ataque       = anim
 	tipo_ataque_atual     = tipo
 	tempo_ataque          = DURACAO_ATAQUE
-	tempo_cooldown_ataque = COOLDOWN_ATAQUE  # <- inicia o cooldown junto
+	tempo_cooldown_ataque = COOLDOWN_ATAQUE 
 
 func verificar_dano_causado(delta):
 	tempo_dano_causado -= delta
@@ -268,7 +249,6 @@ func bloqueio_com_sucesso(quantidade: float = 0.0, _direcao_dano: float = 0.0):
 func morrer():
 	morto    = true
 	velocity = Vector2.ZERO
-	# Não chama _aplicar_colisao_morto aqui — vai ser chamado todo frame no chão
 
 func _aplicar_colisao_morto():
 	if not collision.shape is CapsuleShape2D:
