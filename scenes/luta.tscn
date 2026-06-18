@@ -12,7 +12,7 @@ size = Vector2(1121.5, 96.81235)
 [node name="Luta" type="Node2D" unique_id=1745101218]
 
 [node name="BattleBgt" type="Sprite2D" parent="." unique_id=1148609218]
-position = Vector2(587, -7.9999995)
+position = Vector2(1091, -14.000004)
 scale = Vector2(1.4414063, 1.3828125)
 texture = ExtResource("3_70woq")
 
@@ -30,16 +30,16 @@ grow_horizontal = 1
 grow_vertical = 1
 
 [node name="Player2" parent="." unique_id=454800802 instance=ExtResource("3_ipou6")]
-position = Vector2(1091, 438)
+position = Vector2(972, 509)
 
 [node name="Player1" parent="." unique_id=1872654527 instance=ExtResource("4_ocv87")]
-position = Vector2(126, 422)
+position = Vector2(131, 496)
 scale = Vector2(0.8, 0.8)
 
 [node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=815171004]
 
 [node name="Floor" type="CollisionShape2D" parent="StaticBody2D" unique_id=1742733883]
-position = Vector2(563, 657)
+position = Vector2(566, 739)
 scale = Vector2(2, 2)
 shape = SubResource("RectangleShape2D_ocv87")
 
