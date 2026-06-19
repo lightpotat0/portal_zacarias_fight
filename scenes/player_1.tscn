@@ -38,7 +38,7 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("5_gv8e3")
 }],
-"loop": true,
+"loop": 1,
 "name": &"begin",
 "speed": 5.0
 }, {
@@ -46,7 +46,7 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("1_a5yar")
 }],
-"loop": true,
+"loop": 1,
 "name": &"block",
 "speed": 5.0
 }, {
@@ -60,7 +60,7 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("4_vdha1")
 }],
-"loop": true,
+"loop": 1,
 "name": &"damaged",
 "speed": 5.0
 }, {
@@ -68,7 +68,7 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("4_vdha1")
 }],
-"loop": true,
+"loop": 1,
 "name": &"die",
 "speed": 5.0
 }, {
@@ -76,7 +76,7 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("5_djvvh")
 }],
-"loop": true,
+"loop": 1,
 "name": &"jump",
 "speed": 5.0
 }, {
@@ -84,7 +84,7 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("6_gv8e3")
 }],
-"loop": true,
+"loop": 1,
 "name": &"jump_kick",
 "speed": 5.0
 }, {
@@ -92,7 +92,7 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("7_tci7f")
 }],
-"loop": true,
+"loop": 1,
 "name": &"jump_punch",
 "speed": 5.0
 }, {
@@ -103,7 +103,7 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("9_h5b11")
 }],
-"loop": true,
+"loop": 1,
 "name": &"kick",
 "speed": 5.0
 }, {
@@ -114,7 +114,7 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("11_q1mos")
 }],
-"loop": true,
+"loop": 1,
 "name": &"punch",
 "speed": 5.0
 }, {
@@ -122,7 +122,7 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("12_5b25v")
 }],
-"loop": true,
+"loop": 1,
 "name": &"shift",
 "speed": 5.0
 }, {
@@ -130,7 +130,7 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("13_cst6g")
 }],
-"loop": true,
+"loop": 1,
 "name": &"shift_block",
 "speed": 5.0
 }, {
@@ -138,7 +138,7 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("14_chjti")
 }],
-"loop": true,
+"loop": 1,
 "name": &"shift_kick",
 "speed": 5.0
 }, {
@@ -146,7 +146,7 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("15_ept87")
 }],
-"loop": true,
+"loop": 1,
 "name": &"shift_punch",
 "speed": 5.0
 }, {
@@ -154,7 +154,7 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("1_rfmnd")
 }],
-"loop": true,
+"loop": 1,
 "name": &"stop",
 "speed": 5.0
 }, {
@@ -168,7 +168,7 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("22_tci7f")
 }],
-"loop": true,
+"loop": 1,
 "name": &"walk",
 "speed": 5.0
 }]
